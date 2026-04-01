@@ -69,3 +69,19 @@ https://swapi.dev/documentation#starships
 
 voor mijn idee wil ik een Star Wars api gebruiken waarin je starships kan zien en dan bepaalde info kan zien. Je kan dan eerst door wat schepen gaan en als je op een schip klikt dan ga je naar het informatie scherm en dan krijg je meer details over het gekozen starship. Dit wil ik in een character selector style maken zodat het lijkt alsof je een schip kiest voor een missie.
 
+
+## 01/04/2026 (nienke)
+
+### wat heb ik gedaan vandaag?
+
+vandaag ben ik zoek gegaan naar een api die ik wil gebruiken daar ben ik op een star wars api gekomen en een concept bedacht en astro opgezet
+
+### wat heb ik geleerd?
+
+hoe je de basis kan opzetten met astro
+
+### wat ga ik morgen doen?
+
+morgen ga ik feedback gesprekken houden en als het idee goed gekeurt word dan proberen of ik three js kan toevoegen.
+
+
