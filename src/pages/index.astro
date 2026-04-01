@@ -1,8 +1,8 @@
 ---
-const url = "https://jsonplaceholder.typicode.com/todos";
+const url = "https://swapi.dev/api/starships/";
 const response = await fetch(url);
-const todos = await response.json();
-console.log(todos.length);
+const data = await response.json();
+const ships = data.results;
 ---
 
 <html lang="en">
@@ -16,13 +16,10 @@ console.log(todos.length);
   </head>
   <body>
     <h1>Astro</h1>
-    <p>wij hebben {todos.length} taken voor jou</p>
+    <p>wij hebben {ships.length}</p>
     <ul>
-      {todos.map((todo) => <li>{todo.title}</li>)}
+      {ships.map((ship) => <li>{ship.name}</li>)}
     </ul>
-    <script>
-      const h1 = document.querySelector("h1");
-      console.log(h1);
-    </script>
+    <script></script>
   </body>
 </html>
