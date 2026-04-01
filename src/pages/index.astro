@@ -1,0 +1,28 @@
+---
+const url = "https://jsonplaceholder.typicode.com/todos";
+const response = await fetch(url);
+const todos = await response.json();
+console.log(todos.length);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <body>
+    <h1>Astro</h1>
+    <p>wij hebben {todos.length} taken voor jou</p>
+    <ul>
+      {todos.map((todo) => <li>{todo.title}</li>)}
+    </ul>
+    <script>
+      const h1 = document.querySelector("h1");
+      console.log(h1);
+    </script>
+  </body>
+</html>
