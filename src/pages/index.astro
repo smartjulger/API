@@ -1,8 +1,12 @@
 ---
-const url = "https://swapi.dev/api/starships/";
-const response = await fetch(url);
-const data = await response.json();
-const ships = data.results;
+let ships: any[] = [];
+let url: string | null = "https://swapi.dev/api/starships";
+
+while (url) {
+  const data = await (await fetch(url)).json();
+  ships.push(...data.results);
+  url = data.next;
+}
 ---
 
 <html lang="en">
@@ -15,11 +19,13 @@ const ships = data.results;
     <title>Astro</title>
   </head>
   <body>
-    <h1>Astro</h1>
-    <p>wij hebben {ships.length}</p>
-    <ul>
-      {ships.map((ship) => <li>{ship.name}</li>)}
-    </ul>
-    <script></script>
+    <section>
+      <h2>Astro</h2>
+      <p>wij hebben {ships.length} starships</p>
+      <ul>
+        {ships.map((ship) => <li>{ship.name}</li>)}
+      </ul>
+    </section>
+    <script type="module" src="/three.js"></script>
   </body>
 </html>
