@@ -1,12 +1,4 @@
 ---
-let ships: any[] = [];
-let url: string | null = "https://swapi.dev/api/starships";
-
-while (url) {
-  const data = await (await fetch(url)).json();
-  ships.push(...data.results);
-  url = data.next;
-}
 ---
 
 <html lang="en">
@@ -14,18 +6,15 @@ while (url) {
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
+    <link rel="stylesheet" href="styles/main.css" />
+    <title>Three.js Sphere</title>
   </head>
+
   <body>
-    <section>
-      <h2>Astro</h2>
-      <p>wij hebben {ships.length} starships</p>
-      <ul>
-        {ships.map((ship) => <li>{ship.name}</li>)}
-      </ul>
-    </section>
-    <script type="module" src="/three.js"></script>
+    <script>
+      import "/script/solar.js";
+    </script>
   </body>
 </html>

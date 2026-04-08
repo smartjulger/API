@@ -69,3 +69,13 @@ https://swapi.dev/documentation#starships
 
 voor mijn idee wil ik een Star Wars api gebruiken waarin je starships kan zien en dan bepaalde info kan zien. Je kan dan eerst door wat schepen gaan en als je op een schip klikt dan ga je naar het informatie scherm en dan krijg je meer details over het gekozen starship. Dit wil ik in een character selector style maken zodat het lijkt alsof je een schip kiest voor een missie.
 
+
+## 2e idee 
+
+Mijn nieuwe idee die uit het 1e feedback gesprek kwam is om met three js planeten te maken en ze dan ook textures te geven en dan wil ik een solar system gaan maken met daarin als het lukt ook wat satalieten. Als je op een planeet of sataliet klikt dan ga je naar de detail pagina waarin ik de content wil inladen aan de hand van de nasa api
+
+## bronnen 
+
+camera controls binnen three js 
+
+https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
