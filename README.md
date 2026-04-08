@@ -90,6 +90,24 @@ hoe je de basis kan opzetten met astro
 morgen ga ik feedback gesprekken houden en als het idee goed gekeurt word dan proberen of ik three js kan toevoegen.
 
 
+## 08/04/2026
+
+### wat heb ik gedaan vandaag?
+
+vandaag heb ik een workshop gevolgt over hoe Astro werkt en hoe je components kan inladen en hoe het een beetje te werkgaat
+
+Daarna ben ik begonnen met het maken van een sphere die nu ook een glow heeft.
+
+### wat heb ik geleerd?
+
+hoe je components maakt in astro en hoe je een sphere maakt in three js plus een glow add.
+
+### wat ga ik morgen doen?
+
+kijken of ik een andere sphere kan toevoegen en dan gravitie kan  toevoegen aan mijn zon zodat er een planeet omheen kan draaien.
+
+
+
 ## bronnen 
 
 camera controls binnen three js 
