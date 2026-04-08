@@ -97,6 +97,8 @@ morgen ga ik feedback gesprekken houden en als het idee goed gekeurt word dan pr
 vandaag heb ik een workshop gevolgt over hoe Astro werkt en hoe je components kan inladen en hoe het een beetje te werkgaat
 
 Daarna ben ik begonnen met het maken van een sphere die nu ook een glow heeft.
+<img width="746" height="512" alt="image" src="https://github.com/user-attachments/assets/a989b4df-0e77-4bbf-b290-169588637bfe" />
+
 
 ### wat heb ik geleerd?
 
