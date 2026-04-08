@@ -74,8 +74,26 @@ voor mijn idee wil ik een Star Wars api gebruiken waarin je starships kan zien e
 
 Mijn nieuwe idee die uit het 1e feedback gesprek kwam is om met three js planeten te maken en ze dan ook textures te geven en dan wil ik een solar system gaan maken met daarin als het lukt ook wat satalieten. Als je op een planeet of sataliet klikt dan ga je naar de detail pagina waarin ik de content wil inladen aan de hand van de nasa api
 
+
+## 01/04/2026 (nienke)
+
+### wat heb ik gedaan vandaag?
+
+vandaag ben ik zoek gegaan naar een api die ik wil gebruiken daar ben ik op een star wars api gekomen en een concept bedacht en astro opgezet
+
+### wat heb ik geleerd?
+
+hoe je de basis kan opzetten met astro
+
+### wat ga ik morgen doen?
+
+morgen ga ik feedback gesprekken houden en als het idee goed gekeurt word dan proberen of ik three js kan toevoegen.
+
+
 ## bronnen 
 
 camera controls binnen three js 
 
 https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
+
+
