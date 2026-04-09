@@ -108,6 +108,19 @@ hoe je components maakt in astro en hoe je een sphere maakt in three js plus een
 
 kijken of ik een andere sphere kan toevoegen en dan gravitie kan  toevoegen aan mijn zon zodat er een planeet omheen kan draaien.
 
+## 09/04/2026
+
+### wat heb ik gedaan vandaag?
+
+vandaag heb ik een workshop gevolt over local storage en daarna ben ik extra planeten gaan toevoegenen gaan kijken dat je vrij kan rond bewegen binnen mijn website.
+
+### wat heb ik geleerd?
+
+hoe je een extra planeet kan toevoegen en hoe je die dan kan verplaatsen zodat die niet op de zon zelf staat.
+
+### wat ga ik volgende keer doen?
+
+Ik kijken of ik de maan kan laten rotaten om de aarde heen 
 
 
 ## bronnen 
