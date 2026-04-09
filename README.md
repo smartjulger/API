@@ -112,8 +112,41 @@ kijken of ik een andere sphere kan toevoegen en dan gravitie kan  toevoegen aan 
 
 ## bronnen 
 
-camera controls binnen three js 
+**camera controls binnen three js** 
 
 https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
 
 
+
+**maan rotaten om de aarde heen.**
+
+https://waelyasmina.net/articles/how-to-make-an-object-rotate-around-another-object-in-three-js/
+
+https://medium.com/@wwdhfernando/circular-motion-with-javascript-48d49a713bf4
+
+
+
+**Three.js documentatie**
+https://threejs.org/docs/
+Gebruikt voor het opzetten van de 3D-scene: renderer, camera, geometrie en materialen.
+
+**Three.js OrbitControls**
+https://threejs.org/docs/#examples/en/controls/OrbitControls
+Gebruikt om de camera met de muis te besturen — draaien, zoomen en pannen.
+
+
+**fly controls**
+
+https://threejs.org/docs/#FlyControls
+
+**Three.js UnrealBloomPass**
+https://threejs.org/docs/#examples/en/postprocessing/UnrealBloomPass
+Gebruikt voor het gloei-effect (bloom) op de zon.
+
+**Three.js EffectComposer**
+https://threejs.org/docs/#examples/en/postprocessing/EffectComposer
+Gebruikt als post-processing pipeline om de bloom-pass toe te voegen aan de render.
+
+**Medium — How to control Three.js camera like a pro**
+https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
+Gebruikt als uitleg bij het correct instellen van OrbitControls met damping.
