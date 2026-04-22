@@ -124,6 +124,8 @@ https://waelyasmina.net/articles/how-to-make-an-object-rotate-around-another-obj
 
 https://medium.com/@wwdhfernando/circular-motion-with-javascript-48d49a713bf4
 
+https://mattloftus.github.io/2016/02/03/threejs-p2/
+
 
 
 **Three.js documentatie**
@@ -150,3 +152,8 @@ Gebruikt als post-processing pipeline om de bloom-pass toe te voegen aan de rend
 **Medium — How to control Three.js camera like a pro**
 https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
 Gebruikt als uitleg bij het correct instellen van OrbitControls met damping.
+
+
+**textures**
+
+https://planetpixelemporium.com/planets.html
