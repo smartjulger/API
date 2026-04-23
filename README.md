@@ -123,6 +123,19 @@ hoe je een extra planeet kan toevoegen en hoe je die dan kan verplaatsen zodat d
 Ik kijken of ik de maan kan laten rotaten om de aarde heen 
 
 
+## 22/04/2026
+
+### wat heb ik gedaan vandaag?
+
+vandaag ben ik aan de slag geweest met de array van mijn planeten aan te maken zodat je met een viewtransition naar de planeten kan gaan
+
+### wat heb ik geleerd?
+
+Hoe je met three js een array kan maken en ben bezig met leren hoe je dan kan transitionen naar de planeet
+
+### wat ga ik volgende keer doen?
+verder werken aan de array zodat hij kan transitionen naar de planeet.
+
 ## bronnen 
 
 **camera controls binnen three js** 
@@ -170,3 +183,16 @@ Gebruikt als uitleg bij het correct instellen van OrbitControls met damping.
 **textures**
 
 https://planetpixelemporium.com/planets.html
+
+**Array**
+
+https://giridhar7632.github.io/Three.js/04-scene-and-renderer.html
+
+https://sbcode.net/threejs/object-hierarchy/
+
+https://www.ramijames.com/learn-threejs/foundational-threejs/position-rotation-and-scale
+
+https://dustinpfister.github.io/2021/05/25/threejs-object3d-get-world-position/
+
+https://threejs.org/docs/#Object3D.getWorldPosition
+

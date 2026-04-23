@@ -1,0 +1,36 @@
+---
+const planets = [
+  { id: "sun", label: "sun" },
+  { id: "earth", label: "earth" },
+  { id: "moon", label: "moon" },
+];
+---
+
+<nav id="planet-nav">
+  {planets.map((p) => <button data-planet={p.id}>{p.label}</button>)}
+</nav>
+
+<style>
+  #planet-nav {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #planet-nav button {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+  }
+
+  #planet-nav button:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+</style>

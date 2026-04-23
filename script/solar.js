@@ -3,14 +3,18 @@ import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import getStarfield from './src/getStarfield.js';
-import { getFresnelMat } from './src/getFresnelMat.js';
+import getStarfield from '../script/getStarfield.js';
+import { getFresnelMat } from '../script/getFresnelMat.js';
 
 const SUN_RADIUS   = 15;
-const EARTH_RADIUS = 2;
+const EARTH_RADIUS = 4;
 const EARTH_DIST   = 120;
-const MOON_RADIUS  = 0.5;
-const MOON_DIST    = 8;
+const MOON_RADIUS  = 1;
+const MOON_DIST    = 16;
+
+const Bodies = [
+  {id: 'sun', getPosition:() => sun.position.clone(), }
+]
 
 // Scene
 const scene = new THREE.Scene();
@@ -31,13 +35,12 @@ const controls = new FlyControls(camera, renderer.domElement);
 controls.movementSpeed = 15;
 controls.rollSpeed = Math.PI / 12;
 controls.dragToLook = true;
-renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
 
-// Sterren
+// Sterren imported
 const stars = getStarfield({ numStars: 2000 });
 scene.add(stars);
 
-// Licht vanuit de zon — decay=0 want op solar-systeem schaal valt licht anders af
+// Licht vanuit de zon 
 const sunLight = new THREE.PointLight(0xffffff, 2.0, 0, 0);
 scene.add(sunLight);
 
@@ -57,7 +60,7 @@ earthGroup.rotation.z = -23.4 * Math.PI / 180;
 earthGroup.position.x = EARTH_DIST;
 scene.add(earthGroup);
 
-const detail   = 12;
+const detail   = 24;
 const earthGeo = new THREE.IcosahedronGeometry(EARTH_RADIUS, detail);
 const earthMat = new THREE.MeshPhongMaterial({
   map: loader.load('/textures/earthmap1k.jpg'),
@@ -121,6 +124,7 @@ function animate() {
 
 
   // Maan omloopbaan rond aarde
+// rotatie berekening gedaan met claude
   moonAngle += 0.005;
   moon.position.x = EARTH_DIST + Math.cos(moonAngle) * MOON_DIST;
   moon.position.z = Math.sin(moonAngle) * MOON_DIST;

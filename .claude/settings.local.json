@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "WebSearch",
+      "WebFetch(domain:api.le-systeme-solaire.net)",
+      "WebFetch(domain:www.youtube.com)"
+    ]
+  }
+}
