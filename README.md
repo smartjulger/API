@@ -136,6 +136,20 @@ Hoe je met three js een array kan maken en ben bezig met leren hoe je dan kan tr
 ### wat ga ik volgende keer doen?
 verder werken aan de array zodat hij kan transitionen naar de planeet.
 
+## 23/04/2026
+
+### wat heb ik gedaan vandaag?
+
+vandaag ben ik bezig geweest met ervoor zorgen dat je smoothly naar een planeet gaat en dan dat hij de planeet blijft volgen
+
+### wat heb ik geleerd?
+
+hoe .clone werkt zodat je de huidige locatie ophaalt van een item.
+
+### wat ga ik volgende keer doen?
+
+feedback gesprek houden en daarna data van de api inladen binnen de detail pagina.
+
 ## bronnen 
 
 **camera controls binnen three js** 
