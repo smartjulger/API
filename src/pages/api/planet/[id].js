@@ -1,30 +1,26 @@
 export async function GET({ params }) {
   try {
     const apiKey = import.meta.env.SOLAR_API_KEY;
-    
-    if (!apiKey) {
-      return new Response(JSON.stringify({ error: 'API key not configured' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+
+    // Build headers only when needed. The external API is public,
+    // so don't send Authorization when no key is configured.
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      'Accept': 'application/json'
+    };
+    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`;
 
     const res = await fetch(
       `https://api.le-systeme-solaire.net/rest/bodies/${params.id}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-          'Accept': 'application/json'
-        }
-      }
+      { headers }
     );
 
-    const data = await res.text();
-    
-    return new Response(data, {
+    const contentType = res.headers.get('content-type') || 'application/json';
+    const body = await res.text();
+
+    return new Response(body, {
       status: res.status,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': contentType },
     });
   } catch (err) {
     console.error('API Error:', err);
