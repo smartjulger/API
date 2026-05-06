@@ -198,6 +198,8 @@ Gebruikt als uitleg bij het correct instellen van OrbitControls met damping.
 
 https://planetpixelemporium.com/planets.html
 
+
+
 **Array**
 
 https://giridhar7632.github.io/Three.js/04-scene-and-renderer.html
