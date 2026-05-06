@@ -152,100 +152,69 @@ feedback gesprek houden en daarna data van de api inladen binnen de detail pagin
 
 ## bronnen 
 
-**Raycaster — klikbare planeten**
+**camera controls binnen three js** 
 
-https://threejs.org/docs/#api/en/core/Raycaster
-Officiële documentatie van de Raycaster-klasse. Gebruikt voor het detecteren welke planeet de gebruiker aanklikt.
-
-https://threejs-journey.com/lessons/raycaster-and-mouse-events
-Bruno Simon's uitleg over `setFromCamera()`, `intersectObject()` en `intersectObjects()` — precies de methodes die ik gebruik in mijn click-handler.
-
-https://syntaxbytetutorials.com/three-js-raycasting-for-mouse-picking/
-Praktische walkthrough van mouse picking met genormaliseerde device coordinates (de `(e.clientX / window.innerWidth) * 2 - 1` berekening).
-
-https://discourse.threejs.org/t/how-to-create-sketchfab-like-annotations-with-three-js/12595
-Forum-thread over klikbare annotaties + camera-tween — dezelfde combinatie van raycaster + GSAP die ik in mijn `flyTo()` gebruik.
+https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
 
 
-**GSAP camera-animatie (flyTo)**
 
-https://waelyasmina.net/articles/animating-camera-transitions-in-three-js-using-gsap/
-Volledige tutorial over `gsap.to()` op `camera.position` met `onUpdate` om `camera.lookAt()` mee te animeren — exact het patroon achter mijn `flyTo()`-functie.
+**maan rotaten om de aarde heen.**
 
-https://gsap.com/docs/v3/GSAP/gsap.to()
-Officiële GSAP-documentatie van de `to()`-methode, inclusief easing (`power4.out`, `power2.in`) en het `kill()`-mechanisme dat ik gebruik om lopende tweens af te breken bij een nieuwe klik.
+https://waelyasmina.net/articles/how-to-make-an-object-rotate-around-another-object-in-three-js/
 
-https://gsap.com/docs/v3/Eases/
-Visuele easing-cheatsheet — handig om te begrijpen waarom `power4.out` zo goed werkt voor een vliegbeweging die soepel uitloopt.
+https://medium.com/@wwdhfernando/circular-motion-with-javascript-48d49a713bf4
+
+https://mattloftus.github.io/2016/02/03/threejs-p2/
 
 
-**HTML-labels boven 3D-objecten**
 
-https://www.ramijames.com/learn-threejs/interaction/html-overlays-and-labels
-Behandelt precies de aanpak die ik gebruik: `Vector3.project(camera)` om wereldcoördinaten naar NDC te brengen, dan naar pixels schalen en de label-`div` daarop positioneren. Inclusief de `pos.z > 1`-check om labels achter de camera te verbergen.
+**Three.js documentatie**
+https://threejs.org/docs/
+Gebruikt voor het opzetten van de 3D-scene: renderer, camera, geometrie en materialen.
 
-https://discourse.threejs.org/t/how-to-understand-vector3-project-and-ndc-space/26535
-Forum-discussie over wat NDC-space precies betekent en wanneer `project()` rare waarden teruggeeft.
-
-https://threejs.org/docs/#api/en/math/Vector3.project
-Documentatie van de `project()`-methode zelf.
+**Three.js OrbitControls**
+https://threejs.org/docs/#examples/en/controls/OrbitControls
+Gebruikt om de camera met de muis te besturen — draaien, zoomen en pannen.
 
 
-**Solar System OpenData API**
+**fly controls**
 
-https://api.le-systeme-solaire.net/en/
-Officiële documentatie van de API die ik gebruik om de Engelse planeetnamen op te halen. Geeft ook toegang tot velden als `sideralOrbit`, `sideralRotation`, `axialTilt`, `gravity`, `meanRadius` — bruikbaar als ik mijn hardcoded waarden door echte data wil vervangen.
+https://threejs.org/docs/#FlyControls
 
-https://github.com/systeme-solaire/api-rest
-GitHub-repo met querystring-parameters (`data=`, `exclude=`, `order=`) en het volledige veldenoverzicht.
+**Three.js UnrealBloomPass**
+https://threejs.org/docs/#examples/en/postprocessing/UnrealBloomPass
+Gebruikt voor het gloei-effect (bloom) op de zon.
 
+**Three.js EffectComposer**
+https://threejs.org/docs/#examples/en/postprocessing/EffectComposer
+Gebruikt als post-processing pipeline om de bloom-pass toe te voegen aan de render.
 
-**Bobby Roe — basis van getFresnelMat & getStarfield**
-
-https://github.com/bobbyroe/threejs-earth
-De originele repo waar `getFresnelMat.js` en `getStarfield.js` vandaan komen, inclusief de aarde met dag-/nacht-textures, additieve lights-laag en Fresnel-glow.
-
-https://www.youtube.com/watch?v=FntV9iEJ0tU
-Begeleidende video van Bobby Roe waarin hij de multi-layered earth stap voor stap opbouwt.
-
-
-**Planeet-textures (alternatieve bron)**
-
-https://www.solarsystemscope.com/textures/
-Equirectangulaire planeetkaarten gebaseerd op NASA-data, gratis onder CC-BY 4.0. Hogere resolutie dan Planet Pixel Emporium en consistenter qua belichting tussen planeten.
+**Medium — How to control Three.js camera like a pro**
+https://medium.com/geekculture/how-to-control-three-js-camera-like-a-pro-a8575a717a2
+Gebruikt als uitleg bij het correct instellen van OrbitControls met damping.
 
 
-**Postprocessing — bloom rond de zon**
+**textures**
 
-https://threejs.org/examples/#webgl_postprocessing_unreal_bloom
-Officieel Three.js-voorbeeld waarin de drie parameters van `UnrealBloomPass` (strength, radius, threshold) interactief zijn — handig om mijn waarden `1.5, 0.4, 0.85` te begrijpen.
-
-https://medium.com/@kareemelbahrawy/post-processing-with-three-js-unreal-bloom-effect-1-cb4b6a87de7e
-Achtergrondartikel over hoe `EffectComposer` werkt als pipeline (`RenderPass` → `UnrealBloomPass`) en wanneer je überhaupt postprocessing nodig hebt.
+https://planetpixelemporium.com/planets.html
 
 
-**Delta-time animatie**
 
-https://discoverthreejs.com/book/first-steps/animation-loop/
-Uitleg over waarom je `(now - prevTime) / 1000` gebruikt in plaats van een vaste rotatie per frame — zorgt dat snelheden constant blijven onafhankelijk van framerate.
+**Array**
 
-https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame
-MDN-documentatie van `requestAnimationFrame`, de basis van mijn `animate()`-loop.
+https://giridhar7632.github.io/Three.js/04-scene-and-renderer.html
 
+https://sbcode.net/threejs/object-hierarchy/
 
-**Axiale kanteling van planeten**
+https://www.ramijames.com/learn-threejs/foundational-threejs/position-rotation-and-scale
 
-https://nssdc.gsfc.nasa.gov/planetary/factsheet/
-NASA Planetary Fact Sheet — bron van de echte axiale-tilt-waarden (-23.4° voor Aarde, -177.4° voor Venus, -97.8° voor Uranus, etc.) die ik in `rotation.z` zet voor elke planeetgroep.
+https://dustinpfister.github.io/2021/05/25/threejs-object3d-get-world-position/
 
-
-**localStorage — actieve planeet onthouden**
-
-https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
-MDN-documentatie van `localStorage.setItem()` / `getItem()`, gebruikt om de laatst geselecteerde planeet over een refresh heen te bewaren.
+https://threejs.org/docs/#Object3D.getWorldPosition
 
 
-**RingGeometry — ringen van Saturnus**
 
-https://threejs.org/docs/#api/en/geometries/RingGeometry
-Documentatie van `RingGeometry(innerRadius, outerRadius, segments)`, gebruikt voor de ringen rond Saturnus met `DoubleSide` en transparantie.
+**Berekeningen planeten**
+
+https://claude.ai/share/89b2da3d-d1df-4047-b55e-ee1e032e7e12
+
