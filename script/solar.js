@@ -188,8 +188,8 @@ plutoGroup.add(plutoMesh);
 // --- BANEN OM DE ZON + AXIALE ROTATIE ---
 // speed = baan-snelheid (rad/s), spin = eigen-rotatie (rad/s, negatief = retrograde)
 const orbits = [
-  { group: mercuryGroup, mesh: mercuryMesh, dist: MERCURY_DIST, angle: 0,   speed: 2.40,   spin:  0.10  },
-  { group: venusGroup,   mesh: venusMesh,   dist: VENUS_DIST,   angle: 1.0, speed: 0.94,   spin: -0.04  },
+  { group: mercuryGroup, mesh: mercuryMesh, dist: MERCURY_DIST, angle: 0,   speed: 1.10,   spin:  0.25  },
+  { group: venusGroup,   mesh: venusMesh,   dist: VENUS_DIST,   angle: 1.0, speed: 0.84,   spin: -0.15  },
   { group: earthGroup,   mesh: earthMesh,   dist: EARTH_DIST,   angle: 2.0, speed: 0.58,   spin:  0.50  },
   { group: marsGroup,    mesh: marsMesh,    dist: MARS_DIST,    angle: 3.0, speed: 0.31,   spin:  0.48  },
   { group: jupiterGroup, mesh: jupiterMesh, dist: JUPITER_DIST, angle: 4.0, speed: 0.049,  spin:  1.20  },
