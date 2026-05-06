@@ -8,6 +8,9 @@ import { gsap } from 'gsap';
 import getStarfield from './getStarfield.js';
 import { getFresnelMat } from './getFresnelMat.js';
 
+// API key komt via index.astro vanuit .env
+const API_KEY = window.PUBLIC_SOLAR_API_KEY;
+
 const SUN_RADIUS     = 15;
 const EARTH_RADIUS   = 4;
 const EARTH_DIST     = 120;
@@ -149,8 +152,8 @@ const saturnGeo  = new THREE.IcosahedronGeometry(SATURN_RADIUS, 12);
 const saturnMat  = new THREE.MeshPhongMaterial({ map: loader.load('/textures/saturnmap.jpg') });
 const saturnMesh = new THREE.Mesh(saturnGeo, saturnMat);
 saturnGroup.add(saturnMesh);
-const ringGeo  = new THREE.RingGeometry(SATURN_RADIUS * 1.4, SATURN_RADIUS * 2.3, 64);
-const ringMat  = new THREE.MeshBasicMaterial({ color: 0xd4b483, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+const ringGeo    = new THREE.RingGeometry(SATURN_RADIUS * 1.4, SATURN_RADIUS * 2.3, 64);
+const ringMat    = new THREE.MeshBasicMaterial({ color: 0xd4b483, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
 const saturnRing = new THREE.Mesh(ringGeo, ringMat);
 saturnRing.rotation.x = Math.PI / 2;
 saturnGroup.add(saturnRing);
@@ -186,7 +189,6 @@ const plutoMesh = new THREE.Mesh(plutoGeo, plutoMat);
 plutoGroup.add(plutoMesh);
 
 // --- BANEN OM DE ZON + AXIALE ROTATIE ---
-// speed = baan-snelheid (rad/s), spin = eigen-rotatie (rad/s, negatief = retrograde)
 const orbits = [
   { group: mercuryGroup, mesh: mercuryMesh, dist: MERCURY_DIST, angle: 0,   speed: 1.10,   spin:  0.25  },
   { group: venusGroup,   mesh: venusMesh,   dist: VENUS_DIST,   angle: 1.0, speed: 0.84,   spin: -0.15  },
@@ -222,38 +224,77 @@ composer.addPass(new UnrealBloomPass(
   1.5, 0.4, 0.85
 ));
 
-// --- HTML LABELS ---
-const labelsContainer = document.getElementById('labels');
-const labelVec = new THREE.Vector3();
+// --- INFO PANEEL HELPERS ---
+function formatMass(mass) {
+  if (!mass) return '—';
+  return `${mass.massValue} × 10<sup>${mass.massExponent}</sup> kg`;
+}
 
-bodies.forEach(body => {
-  const el = document.createElement('div');
-  el.className = 'planet-label';
-  el.textContent = body.id;
-  body.labelEl = el;
-  labelsContainer.appendChild(el);
+function kelvinToCelsius(k) {
+  if (k == null) return '—';
+  return `${k} K (${(k - 273.15).toFixed(1)} °C)`;
+}
+
+function formatNumber(val, unit) {
+  if (val == null) return '—';
+  return `${val.toLocaleString()} ${unit}`;
+}
+
+// --- INFO PANEEL ---
+const infoPanel = document.getElementById('info-panel');
+const infoClose = document.getElementById('info-close');
+
+infoClose?.addEventListener('click', () => {
+  gsap.to(infoPanel, {
+    opacity: 0, x: 20, duration: 0.3, ease: 'power2.in',
+    onComplete: () => infoPanel.classList.add('hidden'),
+  });
 });
 
-bodies.forEach(async (body) => {
-  try {
-    const res  = await fetch(`https://api.le-systeme-solaire.net/rest/bodies/${body.apiId}`);
-    const data = await res.json();
-    if (data.englishName) body.labelEl.textContent = data.englishName;
-  } catch (_) {}
-});
-
-// --- LABEL ZICHTBAARHEID ---
-let activeLabelBody = null;
-
-function showLabel(body) {
-  if (activeLabelBody && activeLabelBody !== body) {
-    gsap.to(activeLabelBody.labelEl, { opacity: 0, duration: 0.25, ease: 'power2.in' });
-  }
-  activeLabelBody = body;
-  gsap.fromTo(body.labelEl,
-    { opacity: 0, scale: 0.85 },
-    { opacity: 1, scale: 1, duration: 0.45, ease: 'power4.out' }
+async function fetchAndShowInfo(body) {
+  infoPanel.classList.remove('hidden');
+  gsap.fromTo(infoPanel,
+    { opacity: 0, x: 20 },
+    { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' }
   );
+
+  // Laadtekst
+  document.getElementById('info-name').textContent     = body.id.charAt(0).toUpperCase() + body.id.slice(1);
+  document.getElementById('info-type').textContent     = '';
+  document.getElementById('info-gravity').textContent  = '…';
+  document.getElementById('info-mass').innerHTML       = '…';
+  document.getElementById('info-radius').textContent   = '…';
+  document.getElementById('info-temp').textContent     = '…';
+  document.getElementById('info-density').textContent  = '…';
+  document.getElementById('info-escape').textContent   = '…';
+  document.getElementById('info-orbit').textContent    = '…';
+  document.getElementById('info-rotation').textContent = '…';
+  document.getElementById('info-moons').textContent    = '…';
+
+  try {
+    const headers = API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {};
+    const res = await fetch(
+      `https://api.le-systeme-solaire.net/rest/bodies/${body.apiId}`,
+      { headers }
+    );
+    const d = await res.json();
+
+    document.getElementById('info-name').textContent     = d.englishName || body.id;
+    document.getElementById('info-type').textContent     = d.bodyType    || '—';
+    document.getElementById('info-gravity').textContent  = d.gravity     != null ? `${d.gravity} m/s²`    : '—';
+    document.getElementById('info-mass').innerHTML       = formatMass(d.mass);
+    document.getElementById('info-radius').textContent   = formatNumber(d.meanRadius, 'km');
+    document.getElementById('info-temp').textContent     = kelvinToCelsius(d.avgTemp);
+    document.getElementById('info-density').textContent  = d.density     != null ? `${d.density} g/cm³`   : '—';
+    document.getElementById('info-escape').textContent   = d.escape      != null ? `${d.escape} m/s`      : '—';
+    document.getElementById('info-orbit').textContent    = d.sideralOrbit    != null ? `${d.sideralOrbit} days`  : '—';
+    document.getElementById('info-rotation').textContent = d.sideralRotation != null ? `${d.sideralRotation} h` : '—';
+    document.getElementById('info-moons').textContent    = d.moons ? d.moons.length : '0';
+  } catch (err) {
+    document.getElementById('info-name').textContent    = body.id;
+    document.getElementById('info-gravity').textContent = 'Failed to load';
+    console.error(err);
+  }
 }
 
 // --- RAYCASTER ---
@@ -282,22 +323,9 @@ renderer.domElement.addEventListener('click', (e) => {
   const hits = raycaster.intersectObjects(clickableMeshes);
   if (hits.length > 0) {
     const body = meshBodyMap.get(hits[0].object);
-    if (body) { showLabel(body); flyTo(body); }
+    if (body) { fetchAndShowInfo(body); flyTo(body); }
   }
 });
-
-// --- LABEL POSITIONERING ---
-function updateLabels() {
-  bodies.forEach(body => {
-    labelVec.copy(body.getPosition());
-    labelVec.project(camera);
-    if (labelVec.z > 1) return;
-    const x = ( labelVec.x * 0.5 + 0.5) * window.innerWidth;
-    const y = (-labelVec.y * 0.5 + 0.5) * window.innerHeight;
-    body.labelEl.style.left = `${x}px`;
-    body.labelEl.style.top  = `${y + 16}px`;
-  });
-}
 
 // --- CAMERA FLY-TO ---
 let trackedBody  = null;
@@ -340,7 +368,6 @@ function animate() {
   const delta = (now - prevTime) / 1000;
   prevTime    = now;
 
-  // Banen + axiale rotatie van de planeten
   for (const o of orbits) {
     o.angle += o.speed * delta;
     o.group.position.x = Math.cos(o.angle) * o.dist;
@@ -348,21 +375,17 @@ function animate() {
     o.mesh.rotation.y += o.spin * delta;
   }
 
-  // Aarde-extra-lagen synchroon laten draaien met de aardemesh
   lightsMesh.rotation.y = earthMesh.rotation.y;
   glowMesh.rotation.y   = earthMesh.rotation.y;
 
-  // Zon en maan staan niet in orbits — apart laten roteren
   sun.rotation.y  += 0.05 * delta;
   moon.rotation.y += 0.05 * delta;
 
-  // Maan: baan om de aarde (na de orbit-update zodat earthGroup.position klopt)
   moonAngle += 0.002;
   moon.position.x = earthGroup.position.x + Math.cos(moonAngle) * MOON_DIST;
   moon.position.z = earthGroup.position.z + Math.sin(moonAngle) * MOON_DIST;
   moon.position.y = earthGroup.position.y;
 
-  // Camera-tracking: na alle posities zodat hij niet één frame achterloopt
   if (trackedBody) {
     const target = trackedBody.getPosition();
     const dest   = target.clone().add(new THREE.Vector3(0, trackedBody.camOffset * 0.3, trackedBody.camOffset));
@@ -371,10 +394,7 @@ function animate() {
   }
 
   controls.update(delta);
-
   stars.rotation.y -= 0.0002;
-
-  updateLabels();
   composer.render();
 }
 
@@ -384,7 +404,7 @@ animate();
 const saved = localStorage.getItem('activePlanet');
 if (saved) {
   const body = bodies.find(b => b.id === saved);
-  if (body) { showLabel(body); flyTo(body); }
+  if (body) { fetchAndShowInfo(body); flyTo(body); }
 }
 
 window.addEventListener('keydown', (e) => {
@@ -405,6 +425,6 @@ document.querySelectorAll('#planet-nav button').forEach(btn => {
   btn.addEventListener('click', () => {
     const id   = btn.dataset.planet;
     const body = bodies.find(b => b.id === id);
-    if (body) { showLabel(body); flyTo(body); }
+    if (body) { fetchAndShowInfo(body); flyTo(body); }
   });
 });
