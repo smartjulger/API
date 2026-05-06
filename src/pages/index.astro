@@ -2,7 +2,6 @@
 import Planetsnav from "../components/planetsnav.astro";
 import "../../styles/main.css";
 
-const apiKey = import.meta.env.SOLAR_API_KEY ?? "";
 ---
 
 <html lang="en">
@@ -20,45 +19,57 @@ const apiKey = import.meta.env.SOLAR_API_KEY ?? "";
 
     <!-- Info paneel -->
     <aside id="info-panel" class="hidden">
-      <button id="info-close" aria-label="Close">✕</button>
-      <h2 id="info-name">—</h2>
-      <p id="info-type" class="info-type"></p>
+      <button id="info-close" aria-label="Close">← BACK</button>
 
-      <div class="info-row">
-        <span class="info-label">Gravity</span>
-        <span class="info-value" id="info-gravity">—</span>
+      <!-- Links: planeet naam + type -->
+      <div class="panel-identity">
+        <h2 id="info-name">—</h2>
+        <p id="info-type" class="info-type"></p>
       </div>
-      <div class="info-row">
-        <span class="info-label">Mass</span>
-        <span class="info-value" id="info-mass">—</span>
+
+      <!-- Rechts: statistieken -->
+      <div class="panel-stats">
+        <div class="stat-group">
+          <span class="stat-label">Gravity</span>
+          <span class="stat-value" id="info-gravity">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Mass</span>
+          <span class="stat-value" id="info-mass">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Mean radius</span>
+          <span class="stat-value" id="info-radius">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Avg temperature</span>
+          <span class="stat-value" id="info-temp">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Density</span>
+          <span class="stat-value" id="info-density">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Escape velocity</span>
+          <span class="stat-value" id="info-escape">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Orbital period</span>
+          <span class="stat-value" id="info-orbit">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Rotation period</span>
+          <span class="stat-value" id="info-rotation">—</span>
+        </div>
+        <div class="stat-group">
+          <span class="stat-label">Moons</span>
+          <span class="stat-value" id="info-moons">—</span>
+        </div>
       </div>
-      <div class="info-row">
-        <span class="info-label">Mean radius</span>
-        <span class="info-value" id="info-radius">—</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Avg temperature</span>
-        <span class="info-value" id="info-temp">—</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Density</span>
-        <span class="info-value" id="info-density">—</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Escape velocity</span>
-        <span class="info-value" id="info-escape">—</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Orbital period</span>
-        <span class="info-value" id="info-orbit">—</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Rotation period</span>
-        <span class="info-value" id="info-rotation">—</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Moons</span>
-        <span class="info-value" id="info-moons">—</span>
+
+      <!-- Onderste balk -->
+      <div class="panel-bottom-bar">
+        <div class="bottom-accent"></div>
       </div>
     </aside>
 

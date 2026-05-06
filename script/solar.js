@@ -8,13 +8,11 @@ import { gsap } from 'gsap';
 import getStarfield from './getStarfield.js';
 import { getFresnelMat } from './getFresnelMat.js';
 
-// API key komt via index.astro vanuit .env
-const API_KEY = window.PUBLIC_SOLAR_API_KEY;
 
 const SUN_RADIUS     = 15;
 const EARTH_RADIUS   = 4;
 const EARTH_DIST     = 120;
-const MOON_RADIUS    = 1;
+const MOON_RADIUS    = .8;
 const MOON_DIST      = 16;
 const MERCURY_RADIUS = 1.5;
 const MERCURY_DIST   = 55;
@@ -224,22 +222,6 @@ composer.addPass(new UnrealBloomPass(
   1.5, 0.4, 0.85
 ));
 
-// --- INFO PANEEL HELPERS ---
-function formatMass(mass) {
-  if (!mass) return '—';
-  return `${mass.massValue} × 10<sup>${mass.massExponent}</sup> kg`;
-}
-
-function kelvinToCelsius(k) {
-  if (k == null) return '—';
-  return `${k} K (${(k - 273.15).toFixed(1)} °C)`;
-}
-
-function formatNumber(val, unit) {
-  if (val == null) return '—';
-  return `${val.toLocaleString()} ${unit}`;
-}
-
 // --- INFO PANEEL ---
 const infoPanel = document.getElementById('info-panel');
 const infoClose = document.getElementById('info-close');
@@ -250,6 +232,21 @@ infoClose?.addEventListener('click', () => {
     onComplete: () => infoPanel.classList.add('hidden'),
   });
 });
+
+function formatMass(mass) {
+  if (!mass) return '—';
+  return `${mass.massValue} × 10<sup>${mass.massExponent}</sup> kg`;
+}
+
+function formatNumber(value, unit) {
+  if (value == null) return '—';
+  return `${value.toLocaleString()} ${unit}`;
+}
+
+function kelvinToCelsius(k) {
+  if (k == null || k === 0) return '—';
+  return `${(k - 273.15).toFixed(1)} °C`;
+}
 
 async function fetchAndShowInfo(body) {
   infoPanel.classList.remove('hidden');
@@ -272,11 +269,7 @@ async function fetchAndShowInfo(body) {
   document.getElementById('info-moons').textContent    = '…';
 
   try {
-    const headers = API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {};
-    const res = await fetch(
-      `https://api.le-systeme-solaire.net/rest/bodies/${body.apiId}`,
-      { headers }
-    );
+    const res = await fetch(`/api/planet/${body.apiId}`);
     const d = await res.json();
 
     document.getElementById('info-name').textContent     = d.englishName || body.id;
@@ -411,6 +404,10 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && trackedBody) {
     trackedBody = null;
     controls.enabled = true;
+    gsap.to(infoPanel, {
+      opacity: 0, x: 20, duration: 0.3, ease: 'power2.in',
+      onComplete: () => infoPanel.classList.add('hidden'),
+    });
   }
 });
 

@@ -218,3 +218,101 @@ https://threejs.org/docs/#Object3D.getWorldPosition
 
 https://claude.ai/share/89b2da3d-d1df-4047-b55e-ee1e032e7e12
 
+
+
+Three.js docs
+
+https://threejs.org/docs/
+
+FlyControls
+
+https://threejs.org/docs/#examples/en/controls/FlyControls
+
+EffectComposer
+
+https://threejs.org/docs/#examples/en/postprocessing/EffectComposer
+
+RenderPass
+
+https://threejs.org/docs/#examples/en/postprocessing/RenderPass
+
+UnrealBloomPass
+
+https://threejs.org/docs/#examples/en/postprocessing/UnrealBloomPass
+
+Raycaster
+
+https://threejs.org/docs/#api/en/core/Raycaster
+
+TextureLoader
+
+https://threejs.org/docs/#api/en/loaders/TextureLoader
+
+PerspectiveCamera
+
+https://threejs.org/docs/#api/en/cameras/PerspectiveCamera
+
+WebGLRenderer
+
+https://threejs.org/docs/#api/en/renderers/WebGLRenderer
+
+Scene
+
+https://threejs.org/docs/#api/en/scenes/Scene
+
+Group
+
+https://threejs.org/docs/#api/en/core/Group
+
+MeshPhongMaterial
+
+https://threejs.org/docs/#api/en/materials/MeshPhongMaterial
+
+MeshBasicMaterial
+
+https://threejs.org/docs/#api/en/materials/MeshBasicMaterial
+
+IcosahedronGeometry
+
+https://threejs.org/docs/#api/en/geometries/IcosahedronGeometry
+
+RingGeometry
+
+https://threejs.org/docs/#api/en/geometries/RingGeometry
+
+GSAP docs
+
+https://gsap.com/docs/v3/
+
+MDN Fetch API
+
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+
+MDN localStorage
+
+https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
+
+MDN requestAnimationFrame
+
+https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+
+MDN WebGL API
+
+https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API
+
+
+Le Système Solaire API
+
+https://api.le-systeme-solaire.net/en/
+
+NASA Solar System Exploration
+
+https://solarsystem.nasa.gov/
+
+JPL Solar System Dynamics
+
+https://ssd.jpl.nasa.gov/
+
+JPL Horizons
+
+https://ssd.jpl.nasa.gov/horizons/

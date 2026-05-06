@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -61,38 +63,40 @@ canvas {
   flex-shrink: 0;
 }
 
-/* --- INFO PANEEL --- */
+/* --- INFO PANEEL (NASA stijl) --- */
 
 #info-panel {
   position: fixed;
-  top: 50%;
-  right: 24px;
-  transform: translateY(-50%);
-  width: 280px;
-  background: rgba(5, 10, 25, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 24px 20px 20px;
-  color: #e8eaf6;
-  font-family: sans-serif;
+  inset: 0;
   z-index: 100;
-  box-shadow: 0 0 40px rgba(80, 120, 255, 0.15);
+  font-family: 'Barlow Condensed', sans-serif;
+  color: #fff;
+  pointer-events: none;
+  background:
+    linear-gradient(to right,  rgba(0,0,0,0.55) 0%, transparent 32%),
+    linear-gradient(to left,   rgba(0,0,0,0.45) 0%, transparent 32%);
 }
 
 #info-panel.hidden {
   display: none;
 }
 
+/* ← BACK */
 #info-close {
   position: absolute;
-  top: 12px;
-  right: 14px;
+  top: 72px;
+  left: 32px;
+  pointer-events: all;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 16px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
   cursor: pointer;
+  padding: 0;
   transition: color 0.2s;
 }
 
@@ -100,43 +104,94 @@ canvas {
   color: #fff;
 }
 
+/* Planeet naam + type — linksonder */
+.panel-identity {
+  position: absolute;
+  bottom: 110px;
+  left: 32px;
+  pointer-events: all;
+}
+
 #info-name {
-  margin: 0 0 2px;
-  font-size: 22px;
-  font-weight: 700;
-  color: #ffffff;
+  display: inline-block;
+  background: #fff;
+  color: #000;
+  padding: 3px 14px 3px 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin: 0 0 10px;
 }
 
 .info-type {
-  margin: 0 0 16px;
-  font-size: 12px;
+  font-size: 11px;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: rgba(180, 200, 255, 0.6);
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+  margin: 0;
 }
 
-.info-row {
+/* Stats — rechterkant, verticaal gecentreerd */
+.panel-stats {
+  position: absolute;
+  top: 50%;
+  right: 40px;
+  transform: translateY(-50%);
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-direction: column;
+  pointer-events: all;
+  min-width: 200px;
 }
 
-.info-row:last-child {
-  border-bottom: none;
+.stat-group {
+  padding: 13px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.info-label {
-  font-size: 12px;
-  color: rgba(180, 200, 255, 0.55);
+.stat-group:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stat-label {
+  font-size: 9px;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
 }
 
-.info-value {
+.stat-value {
+  font-family: 'Space Mono', monospace;
   font-size: 14px;
-  font-weight: 500;
-  color: #c8d8ff;
-  text-align: right;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Onderste balk */
+.panel-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.7);
+  pointer-events: all;
+}
+
+.bottom-accent {
+  height: 2px;
+  background: #e8380d;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
