@@ -201,17 +201,17 @@ const orbits = [
 
 // --- BODIES ARRAY ---
 const bodies = [
-  { id: 'sun',     apiId: 'soleil',  radius: SUN_RADIUS,     getPosition: () => sun.position.clone(),           camOffset: SUN_RADIUS * 4 },
-  { id: 'mercury', apiId: 'mercure', radius: MERCURY_RADIUS, getPosition: () => mercuryGroup.position.clone(),  camOffset: MERCURY_RADIUS * 5 },
+  { id: 'sun',     apiId: 'sun',     radius: SUN_RADIUS,     getPosition: () => sun.position.clone(),           camOffset: SUN_RADIUS * 4 },
+  { id: 'mercury', apiId: 'mercury', radius: MERCURY_RADIUS, getPosition: () => mercuryGroup.position.clone(),  camOffset: MERCURY_RADIUS * 5 },
   { id: 'venus',   apiId: 'venus',   radius: VENUS_RADIUS,   getPosition: () => venusGroup.position.clone(),    camOffset: VENUS_RADIUS * 4 },
-  { id: 'earth',   apiId: 'terre',   radius: EARTH_RADIUS,   getPosition: () => earthGroup.position.clone(),    camOffset: EARTH_RADIUS * 3 },
-  { id: 'moon',    apiId: 'lune',    radius: MOON_RADIUS,    getPosition: () => moon.position.clone(),          camOffset: MOON_RADIUS * 3 },
+  { id: 'earth',   apiId: 'earth',   radius: EARTH_RADIUS,   getPosition: () => earthGroup.position.clone(),    camOffset: EARTH_RADIUS * 3 },
+  { id: 'moon',    apiId: 'moon',    radius: MOON_RADIUS,    getPosition: () => moon.position.clone(),          camOffset: MOON_RADIUS * 3 },
   { id: 'mars',    apiId: 'mars',    radius: MARS_RADIUS,    getPosition: () => marsGroup.position.clone(),     camOffset: MARS_RADIUS * 4 },
   { id: 'jupiter', apiId: 'jupiter', radius: JUPITER_RADIUS, getPosition: () => jupiterGroup.position.clone(),  camOffset: JUPITER_RADIUS * 3 },
-  { id: 'saturn',  apiId: 'saturne', radius: SATURN_RADIUS,  getPosition: () => saturnGroup.position.clone(),   camOffset: SATURN_RADIUS * 4 },
+  { id: 'saturn',  apiId: 'saturn',  radius: SATURN_RADIUS,  getPosition: () => saturnGroup.position.clone(),   camOffset: SATURN_RADIUS * 4 },
   { id: 'uranus',  apiId: 'uranus',  radius: URANUS_RADIUS,  getPosition: () => uranusGroup.position.clone(),   camOffset: URANUS_RADIUS * 4 },
   { id: 'neptune', apiId: 'neptune', radius: NEPTUNE_RADIUS, getPosition: () => neptuneGroup.position.clone(),  camOffset: NEPTUNE_RADIUS * 4 },
-  { id: 'pluto',   apiId: 'pluton',  radius: PLUTO_RADIUS,   getPosition: () => plutoGroup.position.clone(),    camOffset: PLUTO_RADIUS * 8 },
+  { id: 'pluto',   apiId: 'pluto',   radius: PLUTO_RADIUS,   getPosition: () => plutoGroup.position.clone(),    camOffset: PLUTO_RADIUS * 8 },
 ];
 
 // --- BLOOM POSTPROCESSING ---
@@ -270,6 +270,12 @@ async function fetchAndShowInfo(body) {
 
   try {
     const res = await fetch(`/api/planet/${body.apiId}`);
+    
+    if (!res.ok) {
+      console.error(`API error for ${body.apiId}: ${res.status}`);
+      throw new Error(`API returned ${res.status}`);
+    }
+    
     const d = await res.json();
 
     document.getElementById('info-name').textContent     = d.englishName || body.id;
@@ -286,7 +292,7 @@ async function fetchAndShowInfo(body) {
   } catch (err) {
     document.getElementById('info-name').textContent    = body.id;
     document.getElementById('info-gravity').textContent = 'Failed to load';
-    console.error(err);
+    console.error('Fetch error:', err);
   }
 }
 
