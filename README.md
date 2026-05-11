@@ -68,114 +68,6 @@ Na het feedback gesprek bleek mijn eerste idee niet goed over te komen. Ik had e
 
 ---
 
-### Week 3 — 22/04/2026
-
-#### Wat heb ik gedaan?
-
-De aarde en de maan hebben nu echte textures gekregen. De aarde begint ook om de zon te draaien. De zon werkt nu ook als een echte lichtbron (`PointLight`) in plaats van alleen een bloom effect. Ook shaders toegevoegd en de Astro deployment opgezet.
-
-De zon als lichtbron zodat planeten echt belicht worden:
-
-```js
-const sunLight = new THREE.PointLight(0xffffff, 2.0, 0, 0);
-scene.add(sunLight); // licht straalt vanuit het midden van de zon
-
-scene.add(new THREE.AmbientLight(0x223355, 1)); // zwak omgevingslicht zodat de achterkant niet puur zwart is
-```
-
-Texture toevoegen aan de aarde en maan:
-
-```js
-const earthMat = new THREE.MeshPhongMaterial({
-  map: loader.load('/textures/earthmap1k.jpg'),
-});
-const earthMesh = new THREE.Mesh(earthGeo, earthMat);
-earthGroup.add(earthMesh);
-
-const moonMat = new THREE.MeshPhongMaterial({
-  map: loader.load('/textures/moonmap1k.jpg'),
-});
-const moon = new THREE.Mesh(moonGeo, moonMat);
-scene.add(moon);
-```
-
-Aarde in baan om de zon (angle wordt elke frame bijgewerkt):
-
-```js
-let earthAngle = 0;
-
-// In de animatielus:
-earthAngle += 0.58 * delta;
-earthGroup.position.x = Math.cos(earthAngle) * EARTH_DIST;
-earthGroup.position.z = Math.sin(earthAngle) * EARTH_DIST;
-earthMesh.rotation.y += 0.50 * delta;
-```
-
-#### Wat heb ik geleerd?
-
-Hoe je een texture inlaadt via `TextureLoader` en koppelt aan een `MeshPhongMaterial`. Hoe je een baan simuleert met `Math.cos` en `Math.sin`.
-
-#### Wat ga ik volgende keer doen?
-
-Verder werken aan de transitie zodat de camera vloeiend naar een planeet gaat.
-
----
-
-### Week 3 — 23/04/2026
-
-#### Wat heb ik gedaan?
-
-Gezorgd dat de camera vloeiend naar een planeet vliegt en hem daarna blijft volgen. De maan roteert nu ook correct om de aarde.
-
-Camera fly-to via GSAP met `lerp` interpolatie:
-
-```js
-function flyTo(body) {
-  localStorage.setItem('activePlanet', body.id);
-  trackedBody  = null;
-  controls.enabled = false;
-  if (currentTween) currentTween.kill();
-
-  const startPos = camera.position.clone();
-  const progress = { t: 0 };
-
-  currentTween = gsap.to(progress, {
-    t: 1,
-    duration: 5,
-    ease: 'power4.out',
-    onUpdate() {
-      const target = body.getPosition(); // .clone() pakt de huidige positie
-      const dest   = target.clone().add(new THREE.Vector3(0, body.camOffset * 0.3, body.camOffset));
-      camera.position.lerpVectors(startPos, dest, progress.t);
-      camera.lookAt(startPos.clone().lerp(target, progress.t));
-    },
-    onComplete() {
-      trackedBody  = body; // camera volgt nu automatisch mee
-      currentTween = null;
-    },
-  });
-}
-```
-
-Maan positie update per frame (los van de `earthGroup` zodat de baan apart berekend wordt):
-
-```js
-moonAngle += 0.002;
-moon.position.x = earthGroup.position.x + Math.cos(moonAngle) * MOON_DIST;
-moon.position.z = earthGroup.position.z + Math.sin(moonAngle) * MOON_DIST;
-moon.position.y = earthGroup.position.y;
-```
-
-#### Wat heb ik geleerd?
-
-Hoe `.clone()` werkt om de huidige positie van een bewegend object op te halen. Zonder `.clone()` krijg je een referentie die meteen verandert.
-
-#### Wat ga ik volgende keer doen?
-
-Feedback gesprek houden en planeetdata inladen via de API binnen het infopaneel.
-
----
-
 ### Week 2 — 08/04/2026
 
 #### Wat heb ik gedaan?
@@ -261,6 +153,126 @@ Hoe je een object in een cirkel laat bewegen om een ander object met `Math.cos` 
 #### Wat ga ik volgende keer doen?
 
 De aarde en maan een echte texture geven en de aarde om de zon laten draaien.
+
+---
+
+### Week 3 — 22/04/2026
+
+#### Wat heb ik gedaan?
+
+De aarde en de maan hebben nu echte textures gekregen. De aarde begint ook om de zon te draaien. De zon werkt nu ook als een echte lichtbron (`PointLight`) in plaats van alleen een bloom effect. Ook shaders toegevoegd en de Astro deployment opgezet.
+
+De zon als lichtbron zodat planeten echt belicht worden:
+
+```js
+const sunLight = new THREE.PointLight(0xffffff, 2.0, 0, 0);
+scene.add(sunLight); // licht straalt vanuit het midden van de zon
+
+scene.add(new THREE.AmbientLight(0x223355, 1)); // zwak omgevingslicht zodat de achterkant niet puur zwart is
+```
+
+Texture toevoegen aan de aarde en maan, met een nachtlichten-laag via `AdditiveBlending`:
+
+```js
+const earthMat = new THREE.MeshPhongMaterial({
+  map: loader.load('/textures/earthmap1k.jpg'),
+});
+const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+earthGroup.add(earthMesh);
+
+// Nachtlichten over de dagkaart heen
+const lightsMat = new THREE.MeshBasicMaterial({
+  map: loader.load('/textures/earthlights1k.jpg'),
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  polygonOffset: true,
+  polygonOffsetFactor: -1,
+});
+const lightsMesh = new THREE.Mesh(earthGeo, lightsMat);
+lightsMesh.scale.setScalar(1.001); // iets groter om z-fighting te voorkomen
+earthGroup.add(lightsMesh);
+
+const moonMat = new THREE.MeshPhongMaterial({
+  map: loader.load('/textures/moonmap1k.jpg'),
+});
+const moon = new THREE.Mesh(moonGeo, moonMat);
+scene.add(moon);
+```
+
+Aarde in baan om de zon (angle wordt elke frame bijgewerkt):
+
+```js
+let earthAngle = 0;
+
+// In de animatielus:
+earthAngle += 0.58 * delta;
+earthGroup.position.x = Math.cos(earthAngle) * EARTH_DIST;
+earthGroup.position.z = Math.sin(earthAngle) * EARTH_DIST;
+earthMesh.rotation.y += 0.50 * delta;
+```
+
+#### Wat heb ik geleerd?
+
+Hoe je een texture inlaadt via `TextureLoader` en koppelt aan een `MeshPhongMaterial`. Hoe `AdditiveBlending` en `polygonOffset` z-fighting voorkomen bij twee overlappende meshes. Hoe je een baan simuleert met `Math.cos` en `Math.sin`.
+
+#### Wat ga ik volgende keer doen?
+
+Verder werken aan de transitie zodat de camera vloeiend naar een planeet gaat.
+
+---
+
+### Week 3 — 23/04/2026
+
+#### Wat heb ik gedaan?
+
+Gezorgd dat de camera vloeiend naar een planeet vliegt en hem daarna blijft volgen. De maan roteert nu ook correct om de aarde.
+
+Camera fly-to via GSAP met `lerp` interpolatie:
+
+```js
+function flyTo(body) {
+  localStorage.setItem('activePlanet', body.id);
+  trackedBody  = null;
+  controls.enabled = false;
+  if (currentTween) currentTween.kill();
+
+  const startPos = camera.position.clone();
+  const progress = { t: 0 };
+
+  currentTween = gsap.to(progress, {
+    t: 1,
+    duration: 5,
+    ease: 'power4.out',
+    onUpdate() {
+      const target = body.getPosition(); // .clone() pakt de huidige positie
+      const dest   = target.clone().add(new THREE.Vector3(0, body.camOffset * 0.3, body.camOffset));
+      camera.position.lerpVectors(startPos, dest, progress.t);
+      camera.lookAt(startPos.clone().lerp(target, progress.t));
+    },
+    onComplete() {
+      trackedBody  = body; // camera volgt nu automatisch mee
+      currentTween = null;
+    },
+  });
+}
+```
+
+Maan positie update per frame (los van de `earthGroup` zodat de baan apart berekend wordt):
+
+```js
+moonAngle += 0.002;
+moon.position.x = earthGroup.position.x + Math.cos(moonAngle) * MOON_DIST;
+moon.position.z = earthGroup.position.z + Math.sin(moonAngle) * MOON_DIST;
+moon.position.y = earthGroup.position.y;
+```
+
+#### Wat heb ik geleerd?
+
+Hoe `.clone()` werkt om de huidige positie van een bewegend object op te halen. Zonder `.clone()` krijg je een referentie die meteen verandert.
+
+#### Wat ga ik volgende keer doen?
+
+Feedback gesprek houden en planeetdata inladen via de API binnen het infopaneel.
 
 ---
 
@@ -353,25 +365,7 @@ export async function GET({ params }) {
 }
 ```
 
-Planeetdata ophalen en tonen in het infopaneel:
-
-```js
-async function fetchAndShowInfo(body) {
-  infoPanel.classList.remove('hidden');
-  gsap.fromTo(infoPanel, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4 });
-
-  const res = await fetch(`/api/planet/${body.apiId}`);
-  const d   = await res.json();
-
-  document.getElementById('info-name').textContent    = d.englishName;
-  document.getElementById('info-gravity').textContent = `${d.gravity} m/s²`;
-  document.getElementById('info-mass').innerHTML      = `${d.mass.massValue} × 10<sup>${d.mass.massExponent}</sup> kg`;
-  document.getElementById('info-temp').textContent    = `${(d.avgTemp - 273.15).toFixed(1)} °C`;
-  document.getElementById('info-moons').textContent   = d.moons ? d.moons.length : '0';
-}
-```
-
-De detail pagina in Astro laadt de API data in zodra je op een planeet klikt:
+De detail pagina laadt de API data in zodra je op een planeet klikt:
 
 ```js
 async function fetchAndShowInfo(body) {
@@ -403,26 +397,11 @@ De render deployen en testen of alles correct werkt.
 
 #### Wat heb ik gedaan?
 
-Render-problemen opgelost bij de deploy. De aarde heeft ook een nachtlichten-laag (`AdditiveBlending`) en een Fresnel atmosfeer-glow gekregen.
-
-Nachtlichten via `AdditiveBlending` over de dagkaart:
-
-```js
-const lightsMat = new THREE.MeshBasicMaterial({
-  map: loader.load('/textures/earthlights1k.jpg'),
-  blending: THREE.AdditiveBlending,
-  depthWrite: false,
-  polygonOffset: true,
-  polygonOffsetFactor: -1,
-});
-const lightsMesh = new THREE.Mesh(earthGeo, lightsMat);
-lightsMesh.scale.setScalar(1.001); // iets groter om z-fighting te voorkomen
-earthGroup.add(lightsMesh);
-```
+Render-problemen opgelost bij de deploy.
 
 #### Wat heb ik geleerd?
 
-Hoe `AdditiveBlending` en `polygonOffset` z-fighting voorkomen bij twee overlappende meshes. Hoe je een Fresnel-shader gebruikt om een atmosferische gloed te simuleren.
+Hoe je render-problemen bij een Astro deployment opspoort en oplost.
 
 #### Wat ga ik volgende keer doen?
 
