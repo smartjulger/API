@@ -31,20 +31,6 @@ Het originele idee was een Star Wars schepenselector (Racer-style), maar na het 
 
 ---
 
-## Hoe starten
-
-```bash
-npm install
-npm run dev
-```
-
-Maak een `.env` bestand aan met:
-
-```
-SOLAR_API_KEY=jouw_api_key_hier
-```
-
----
 
 ## Weeklog
 
