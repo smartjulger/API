@@ -1,6 +1,6 @@
 export async function GET({ params }) {
   try {
-    const apiKey = import.meta.env.SOLAR_API_KEY;
+    const apiKey = process.env.SOLAR_API_KEY ?? import.meta.env.SOLAR_API_KEY;
     
     if (!apiKey) {
       return new Response(JSON.stringify({ error: 'API key not configured' }), {
