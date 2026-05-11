@@ -1,4 +1,4 @@
-// Three.js core + postprocessing
+// Three.js core + postprocessing imports
 import * as THREE from 'three';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -9,6 +9,8 @@ import getStarfield from './getStarfield.js';
 import { getFresnelMat } from './getFresnelMat.js';
 
 
+// Grootte en afstand van elk hemellichaam in Three.js-eenheden
+// miss in een object zetten of een array
 const SUN_RADIUS     = 15;
 const EARTH_RADIUS   = 4;
 const EARTH_DIST     = 120;
@@ -43,6 +45,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 document.body.appendChild(renderer.domElement);
 
+// Vrije vluchtbesturing met muis en toetsenbord
 const controls = new FlyControls(camera, renderer.domElement);
 controls.movementSpeed = 30;
 controls.rollSpeed = Math.PI / 12;
@@ -60,6 +63,7 @@ scene.add(new THREE.AmbientLight(0x223355, 1));
 const loader = new THREE.TextureLoader();
 
 // --- ZON ---
+// MeshBasicMaterial = altijd volledig verlicht, geen schaduwen
 const sunGeo = new THREE.SphereGeometry(SUN_RADIUS, 32, 16);
 const sunMat = new THREE.MeshBasicMaterial({ color: 0xffffaa });
 const sun    = new THREE.Mesh(sunGeo, sunMat);
@@ -76,6 +80,7 @@ const mercuryMesh = new THREE.Mesh(mercuryGeo, mercuryMat);
 mercuryGroup.add(mercuryMesh);
 
 // --- VENUS ---
+// -177.4° axiale kanteling: Venus draait bijna omgekeerd
 const venusGroup = new THREE.Group();
 venusGroup.rotation.z = -177.4 * Math.PI / 180;
 venusGroup.position.set(VENUS_DIST, 0, 0);
@@ -98,6 +103,7 @@ const earthMat  = new THREE.MeshPhongMaterial({ map: loader.load('/textures/eart
 const earthMesh = new THREE.Mesh(earthGeo, earthMat);
 earthGroup.add(earthMesh);
 
+// Stadslichtenlaag via AdditiveBlending over de nachtkaart
 const lightsMat = new THREE.MeshBasicMaterial({
   map: loader.load('/textures/earthlights1k.jpg'),
   blending: THREE.AdditiveBlending,
@@ -107,15 +113,17 @@ const lightsMat = new THREE.MeshBasicMaterial({
   polygonOffsetUnits: -4,
 });
 const lightsMesh = new THREE.Mesh(earthGeo, lightsMat);
-lightsMesh.scale.setScalar(1.001);
+lightsMesh.scale.setScalar(1.001); // iets groter om z-fighting te voorkomen
 earthGroup.add(lightsMesh);
 
+// Fresnel-gloed simuleert de atmosferische rand
 const fresnelMat = getFresnelMat();
 const glowMesh   = new THREE.Mesh(earthGeo, fresnelMat);
 glowMesh.scale.setScalar(1.01);
 earthGroup.add(glowMesh);
 
 // --- MAAN ---
+// Los van earthGroup zodat de baan apart berekend wordt
 const moonGeo = new THREE.IcosahedronGeometry(MOON_RADIUS, 12);
 const moonMat = new THREE.MeshPhongMaterial({ map: loader.load('/textures/moonmap1k.jpg') });
 const moon    = new THREE.Mesh(moonGeo, moonMat);
@@ -150,13 +158,15 @@ const saturnGeo  = new THREE.IcosahedronGeometry(SATURN_RADIUS, 12);
 const saturnMat  = new THREE.MeshPhongMaterial({ map: loader.load('/textures/saturnmap.jpg') });
 const saturnMesh = new THREE.Mesh(saturnGeo, saturnMat);
 saturnGroup.add(saturnMesh);
+// Ring met DoubleSide zodat hij van beide kanten zichtbaar is
 const ringGeo    = new THREE.RingGeometry(SATURN_RADIUS * 1.4, SATURN_RADIUS * 2.3, 64);
 const ringMat    = new THREE.MeshBasicMaterial({ color: 0xd4b483, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
 const saturnRing = new THREE.Mesh(ringGeo, ringMat);
-saturnRing.rotation.x = Math.PI / 2;
+saturnRing.rotation.x = Math.PI / 2; // plat leggen
 saturnGroup.add(saturnRing);
 
 // --- URANUS ---
+// -97.8°: Uranus ligt bijna op zijn zij
 const uranusGroup = new THREE.Group();
 uranusGroup.rotation.z = -97.8 * Math.PI / 180;
 uranusGroup.position.set(URANUS_DIST, 0, 0);
@@ -187,6 +197,7 @@ const plutoMesh = new THREE.Mesh(plutoGeo, plutoMat);
 plutoGroup.add(plutoMesh);
 
 // --- BANEN OM DE ZON + AXIALE ROTATIE ---
+// speed = omloopsnelheid, spin = rotatie om eigen as, angle = startpositie in de baan
 const orbits = [
   { group: mercuryGroup, mesh: mercuryMesh, dist: MERCURY_DIST, angle: 0,   speed: 1.10,   spin:  0.25  },
   { group: venusGroup,   mesh: venusMesh,   dist: VENUS_DIST,   angle: 1.0, speed: 0.84,   spin: -0.15  },
@@ -200,6 +211,7 @@ const orbits = [
 ];
 
 // --- BODIES ARRAY ---
+// Alle klikbare hemellichamen met positiefunctie en camera-offset voor fly-to .clone pakt huidige positie
 const bodies = [
   { id: 'sun',     apiId: 'sun',     radius: SUN_RADIUS,     getPosition: () => sun.position.clone(),           camOffset: SUN_RADIUS * 4 },
   { id: 'mercury', apiId: 'mercury', radius: MERCURY_RADIUS, getPosition: () => mercuryGroup.position.clone(),  camOffset: MERCURY_RADIUS * 5 },
@@ -215,6 +227,7 @@ const bodies = [
 ];
 
 // --- BLOOM POSTPROCESSING ---
+// UnrealBloomPass voegt een gloei-effect toe 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 composer.addPass(new UnrealBloomPass(
@@ -233,6 +246,9 @@ infoClose?.addEventListener('click', () => {
   });
 });
 
+// Formatteert massa als wetenschappelijke notatie, bijv. "5.97 × 10^24 kg"
+
+// dit is gemaakt door een vriend van mij genaamd owen
 function formatMass(mass) {
   if (!mass) return '—';
   return `${mass.massValue} × 10<sup>${mass.massExponent}</sup> kg`;
@@ -243,11 +259,13 @@ function formatNumber(value, unit) {
   return `${value.toLocaleString()} ${unit}`;
 }
 
+// Zet Kelvin om naar Celsius
 function kelvinToCelsius(k) {
   if (k == null || k === 0) return '—';
   return `${(k - 273.15).toFixed(1)} °C`;
 }
 
+// Haalt planeetdata op via de API en vult het infopaneel
 async function fetchAndShowInfo(body) {
   infoPanel.classList.remove('hidden');
   gsap.fromTo(infoPanel,
@@ -255,48 +273,43 @@ async function fetchAndShowInfo(body) {
     { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' }
   );
 
-  // Laadtekst
-  document.getElementById('info-name').textContent     = body.id.charAt(0).toUpperCase() + body.id.slice(1);
-  document.getElementById('info-type').textContent     = '';
-  document.getElementById('info-gravity').textContent  = '…';
-  document.getElementById('info-mass').innerHTML       = '…';
-  document.getElementById('info-radius').textContent   = '…';
-  document.getElementById('info-temp').textContent     = '…';
-  document.getElementById('info-density').textContent  = '…';
-  document.getElementById('info-escape').textContent   = '…';
-  document.getElementById('info-orbit').textContent    = '…';
-  document.getElementById('info-rotation').textContent = '…';
-  document.getElementById('info-moons').textContent    = '…';
+  // Helper: zet textContent (of innerHTML bij html=true) van een info-veld
+  const set = (id, val, html = false) => {
+    const el = document.getElementById(id);
+    if (html) el.innerHTML = val; else el.textContent = val;
+  };
+
+  // Tijdelijke laadtekst
+  set('info-name', body.id.charAt(0).toUpperCase() + body.id.slice(1));
+  ['info-type', 'info-gravity', 'info-mass', 'info-radius', 'info-temp',
+   'info-density', 'info-escape', 'info-orbit', 'info-rotation', 'info-moons']
+    .forEach(id => set(id, '…'));
 
   try {
-    const res = await fetch(`/api/planet/${body.apiId}`);
-    
-    if (!res.ok) {
-      console.error(`API error for ${body.apiId}: ${res.status}`);
-      throw new Error(`API returned ${res.status}`);
-    }
-    
+    const res = await fetch(`/api/planet?id=${body.apiId}`);
+    if (!res.ok) throw new Error(`API returned ${res.status}`);
     const d = await res.json();
 
-    document.getElementById('info-name').textContent     = d.englishName || body.id;
-    document.getElementById('info-type').textContent     = d.bodyType    || '—';
-    document.getElementById('info-gravity').textContent  = d.gravity     != null ? `${d.gravity} m/s²`    : '—';
-    document.getElementById('info-mass').innerHTML       = formatMass(d.mass);
-    document.getElementById('info-radius').textContent   = formatNumber(d.meanRadius, 'km');
-    document.getElementById('info-temp').textContent     = kelvinToCelsius(d.avgTemp);
-    document.getElementById('info-density').textContent  = d.density     != null ? `${d.density} g/cm³`   : '—';
-    document.getElementById('info-escape').textContent   = d.escape      != null ? `${d.escape} m/s`      : '—';
-    document.getElementById('info-orbit').textContent    = d.sideralOrbit    != null ? `${d.sideralOrbit} days`  : '—';
-    document.getElementById('info-rotation').textContent = d.sideralRotation != null ? `${d.sideralRotation} h` : '—';
-    document.getElementById('info-moons').textContent    = d.moons ? d.moons.length : '0';
+    set('info-name',     d.englishName || body.id);
+    set('info-type',     d.bodyType    || '—');
+    set('info-gravity',  d.gravity     != null ? `${d.gravity} m/s²`          : '—');
+    set('info-mass',     formatMass(d.mass), true);
+    set('info-radius',   formatNumber(d.meanRadius, 'km'));
+    set('info-temp',     kelvinToCelsius(d.avgTemp));
+    set('info-density',  d.density          != null ? `${d.density} g/cm³`        : '—');
+    set('info-escape',   d.escape           != null ? `${d.escape} m/s`           : '—');
+    set('info-orbit',    d.sideralOrbit     != null ? `${d.sideralOrbit} days`    : '—');
+    set('info-rotation', d.sideralRotation  != null ? `${d.sideralRotation} h`    : '—');
+    set('info-moons',    d.moons ? d.moons.length : '0');
   } catch (err) {
-    document.getElementById('info-name').textContent    = body.id;
-    document.getElementById('info-gravity').textContent = 'Failed to load';
+    set('info-name',    body.id);
+    set('info-gravity', 'Failed to load');
     console.error('Fetch error:', err);
   }
 }
 
 // --- RAYCASTER ---
+// Zet muisklikken om naar 3D-stralen om te detecteren welk lichaam is aangeklikt
 const raycaster   = new THREE.Raycaster();
 const pointer     = new THREE.Vector2();
 const meshBodyMap = new Map();
@@ -327,9 +340,10 @@ renderer.domElement.addEventListener('click', (e) => {
 });
 
 // --- CAMERA FLY-TO ---
-let trackedBody  = null;
+let trackedBody  = null; // het lichaam dat de camera momenteel volgt
 let currentTween = null;
 
+// Animeert de camera vloeiend naar een hemellichaam en volgt het daarna automatisch
 function flyTo(body) {
   localStorage.setItem('activePlanet', body.id);
   trackedBody = null;
@@ -338,7 +352,7 @@ function flyTo(body) {
 
   const startPos    = camera.position.clone();
   const startLookAt = startPos.clone().add(camera.getWorldDirection(new THREE.Vector3()));
-  const progress    = { t: 0 };
+  const progress    = { t: 0 }; // t loopt van 0→1 en stuurt de interpolatie
 
   currentTween = gsap.to(progress, {
     t: 1,
@@ -364,9 +378,10 @@ let prevTime  = performance.now();
 function animate() {
   requestAnimationFrame(animate);
   const now   = performance.now();
-  const delta = (now - prevTime) / 1000;
+  const delta = (now - prevTime) / 1000; // seconden sinds vorig frame
   prevTime    = now;
 
+  // Beweeg elke planeet langs zijn baan en draai hem om zijn eigen as
   for (const o of orbits) {
     o.angle += o.speed * delta;
     o.group.position.x = Math.cos(o.angle) * o.dist;
@@ -374,17 +389,20 @@ function animate() {
     o.mesh.rotation.y += o.spin * delta;
   }
 
+  // Synchroniseer lichten- en gloed-laag met de aardrotatie
   lightsMesh.rotation.y = earthMesh.rotation.y;
   glowMesh.rotation.y   = earthMesh.rotation.y;
 
   sun.rotation.y  += 0.05 * delta;
   moon.rotation.y += 0.05 * delta;
 
+  // Beweeg de maan in een cirkel om de aarde
   moonAngle += 0.002;
   moon.position.x = earthGroup.position.x + Math.cos(moonAngle) * MOON_DIST;
   moon.position.z = earthGroup.position.z + Math.sin(moonAngle) * MOON_DIST;
   moon.position.y = earthGroup.position.y;
 
+  // Camera volgt het actieve lichaam mee in zijn baan
   if (trackedBody) {
     const target = trackedBody.getPosition();
     const dest   = target.clone().add(new THREE.Vector3(0, trackedBody.camOffset * 0.3, trackedBody.camOffset));
@@ -400,12 +418,14 @@ function animate() {
 animate();
 
 // --- HERSTEL VORIGE SELECTIE ---
+// Vlieg bij het opstarten direct naar de laatst geselecteerde planeet
 const saved = localStorage.getItem('activePlanet');
 if (saved) {
   const body = bodies.find(b => b.id === saved);
   if (body) { fetchAndShowInfo(body); flyTo(body); }
 }
 
+// Escape: loslaten van gevolgde lichaam en handmatige besturing herstellen
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && trackedBody) {
     trackedBody = null;
@@ -417,6 +437,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
+// Pas camera en renderer aan bij venstergrootte-wijziging
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
@@ -424,6 +445,7 @@ window.addEventListener('resize', () => {
   composer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// Navigatieknoppen vliegen naar de bijbehorende planeet
 document.querySelectorAll('#planet-nav button').forEach(btn => {
   btn.addEventListener('click', () => {
     const id   = btn.dataset.planet;
