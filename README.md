@@ -4,9 +4,7 @@ Een interactief 3D zonnestelsel gebouwd met Three.js en Astro. Je kan vrij rondv
 
 ---
 
-## Concept
 
-Het originele idee was een Star Wars schepenselector (Racer-style), maar na het eerste feedback gesprek is dit veranderd. Het nieuwe idee: een volledig 3D zonnestelsel waar je doorheen kan vliegen. Elk hemellichaam is klikbaar en laadt live data in via een externe API.
 
 **Web API's gebruikt:**
 - [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
@@ -32,46 +30,31 @@ Het originele idee was een Star Wars schepenselector (Racer-style), maar na het 
 ---
 
 
+
 ## Weeklog
 
-### Week 1 — 01/04/2026
+### Week 1
+
+#### 1e idee
+Mijn 1e idee was dat je ruimteschepen kon keizen in een mario style 
+
+uitfeedback kwam dat dit niet een duidelijk idee was daarom ben ik 
+
+
+
+
+### Week 2 — woensdag 08/04/2026
 
 #### Wat heb ik gedaan?
 
-Gezocht naar een bruikbare API, een eerste concept bedacht (Star Wars starships) en Astro opgezet als framework.
-
-#### Wat heb ik geleerd?
-
-Hoe je een basis Astro project opzet met routing en components.
-
-#### Wat ga ik morgen doen?
-
-Feedback gesprek houden en als het idee goedgekeurd wordt Three.js proberen toe te voegen.
-
-#### Week 1 reflectie
-
-Na het feedback gesprek bleek mijn eerste idee niet goed over te komen. Ik had een ruimteschepen-selector in mijn hoofd (een beetje zoals een auto kiezen in Mario Kart), maar dit was lastig uitlegbaar. Mijn nieuwe idee: een 3D zonnestelsel met Three.js, planeten met textures, en data ingeladen via de NASA of een solar API.
-
----
-
-### Week 2 — 08/04/2026
-
-#### Wat heb ik gedaan?
-
-Workshop gevolgd over hoe Astro werkt, hoe components inladen en hoe het framework in elkaar zit. Daarna begonnen met een zon, een aarde als blauwe bol en een maan als bolletje, allemaal nog zonder textures. De eerste scene is opgezet met renderer en bloom.
-
-<img width="746" height="512" alt="image" src="https://github.com/user-attachments/assets/a989b4df-0e77-4bbf-b290-169588637bfe" />
-
-Eerste scene setup met renderer, camera en bloom postprocessing:
+Astro opgezet en na het feedback gesprek overgestapt op het zonnestelsel-concept. De zon aangemaakt als lichtgevende bol met een bloom effect via `UnrealBloomPass`.
 
 ```js
-const scene    = new THREE.Scene();
-const camera   = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.001, 20000);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const sunGeo = new THREE.SphereGeometry(SUN_RADIUS, 32, 16);
+const sunMat = new THREE.MeshBasicMaterial({ color: 0xffffaa });
+const sun    = new THREE.Mesh(sunGeo, sunMat);
+scene.add(sun);
 
-// Bloom via postprocessing pipeline
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 composer.addPass(new UnrealBloomPass(
@@ -80,7 +63,25 @@ composer.addPass(new UnrealBloomPass(
 ));
 ```
 
-Aarde als simpele blauwe bol (nog geen texture):
+#### Wat heb ik geleerd?
+
+Hoe je een basis Astro project opzet en hoe je een bloom effect toevoegt via `UnrealBloomPass`.
+
+#### Wat ga ik morgen doen?
+
+De aarde en maan toevoegen en de maan om de aarde laten draaien.
+
+---
+
+### Week 2 — donderdag 09/04/2026
+
+#### Wat heb ik gedaan?
+
+De aarde en maan toegevoegd als gekleurde bollen zonder texture. De maan draait aan het einde van de dag al om de aarde via `Math.cos` en `Math.sin`.
+
+<img width="746" height="512" alt="image" src="https://github.com/user-attachments/assets/a989b4df-0e77-4bbf-b290-169588637bfe" />
+
+Aarde en maan als simpele gekleurde bollen:
 
 ```js
 const earthGeo  = new THREE.IcosahedronGeometry(EARTH_RADIUS, 24);
@@ -88,85 +89,74 @@ const earthMat  = new THREE.MeshPhongMaterial({ color: 0x2266cc });
 const earthMesh = new THREE.Mesh(earthGeo, earthMat);
 scene.add(earthMesh);
 
-// Maan ook als simpele bol
 const moonGeo = new THREE.IcosahedronGeometry(MOON_RADIUS, 12);
 const moonMat = new THREE.MeshPhongMaterial({ color: 0xaaaaaa });
 const moon    = new THREE.Mesh(moonGeo, moonMat);
 scene.add(moon);
 ```
 
-#### Wat heb ik geleerd?
-
-Hoe je een sphere maakt in Three.js en een glow (bloom) effect toevoegt via `UnrealBloomPass`.
-
-#### Wat ga ik morgen doen?
-
-Zorgen dat de maan om de aarde draait en dat je vrij kan rondkijken.
-
----
-
-### Week 2 — 09/04/2026
-
-#### Wat heb ik gedaan?
-
-Workshop gevolgd over localStorage. De maan draait nu om de aarde. Je kan ook vrij rondkijken in de scene via FlyControls. Ook een sterrenveld toegevoegd als achtergrond.
-
-Sterrenveld toevoegen via een hulpfunctie:
-
-```js
-const stars = getStarfield({ numStars: 2000 });
-scene.add(stars);
-
-// In de animatielus langzaam laten roteren voor een levend gevoel:
-stars.rotation.y -= 0.0002;
-```
-
-Maan laten roteren om de aarde:
+Maan in een cirkel om de aarde:
 
 ```js
 let moonAngle = 0;
 
 // In de animatielus:
 moonAngle += 0.002;
-moon.position.x = earthMesh.position.x + Math.cos(moonAngle) * MOON_DIST;
-moon.position.z = earthMesh.position.z + Math.sin(moonAngle) * MOON_DIST;
+moon.position.x = earthGroup.position.x + Math.cos(moonAngle) * MOON_DIST;
+moon.position.z = earthGroup.position.z + Math.sin(moonAngle) * MOON_DIST;
 ```
 
 #### Wat heb ik geleerd?
 
-Hoe je een object in een cirkel laat bewegen om een ander object met `Math.cos` en `Math.sin`. Hoe je FlyControls toevoegt voor vrije camerabesturing.
+Hoe je meerdere 3D-objecten aanmaakt in Three.js. Hoe je een object in een cirkel laat bewegen met `Math.cos` en `Math.sin`.
 
 #### Wat ga ik volgende keer doen?
 
-De aarde en maan een echte texture geven en de aarde om de zon laten draaien.
+De aarde om de zon laten draaien en textures toevoegen.
 
 ---
 
-### Week 3 — 22/04/2026
+### Week 3 — woensdag 15/04/2026
 
 #### Wat heb ik gedaan?
 
-De aarde en de maan hebben nu echte textures gekregen. De aarde begint ook om de zon te draaien. De zon werkt nu ook als een echte lichtbron (`PointLight`) in plaats van alleen een bloom effect. Ook shaders toegevoegd en de Astro deployment opgezet.
+De aarde draait nu om de zon via hetzelfde orbit-systeem als de maan. De zon fungeert nu als echte lichtbron via `PointLight`.
 
-De zon als lichtbron zodat planeten echt belicht worden:
+```js
+// In de animatielus:
+earthAngle += 0.58 * delta;
+earthGroup.position.x = Math.cos(earthAngle) * EARTH_DIST;
+earthGroup.position.z = Math.sin(earthAngle) * EARTH_DIST;
+earthMesh.rotation.y += 0.50 * delta;
+```
 
 ```js
 const sunLight = new THREE.PointLight(0xffffff, 2.0, 0, 0);
-scene.add(sunLight); // licht straalt vanuit het midden van de zon
-
-scene.add(new THREE.AmbientLight(0x223355, 1)); // zwak omgevingslicht zodat de achterkant niet puur zwart is
+scene.add(sunLight);
+scene.add(new THREE.AmbientLight(0x223355, 1));
 ```
 
-Texture toevoegen aan de aarde en maan, met een nachtlichten-laag via `AdditiveBlending`:
+#### Wat heb ik geleerd?
+
+Hoe je hetzelfde orbit-systeem hergebruikt voor meerdere objecten en hoe een `PointLight` werkt als lichtbron.
+
+#### Wat ga ik morgen doen?
+
+Textures toevoegen aan de aarde en maan.
+
+---
+
+### Week 3 — donderdag 16/04/2026
+
+#### Wat heb ik gedaan?
+
+Textures toegevoegd aan de aarde en maan via `TextureLoader`. De aarde heeft ook een aparte nachtlichten-laag gekregen via `AdditiveBlending`.
 
 ```js
 const earthMat = new THREE.MeshPhongMaterial({
   map: loader.load('/textures/earthmap1k.jpg'),
 });
-const earthMesh = new THREE.Mesh(earthGeo, earthMat);
-earthGroup.add(earthMesh);
 
-// Nachtlichten over de dagkaart heen
 const lightsMat = new THREE.MeshBasicMaterial({
   map: loader.load('/textures/earthlights1k.jpg'),
   blending: THREE.AdditiveBlending,
@@ -175,115 +165,34 @@ const lightsMat = new THREE.MeshBasicMaterial({
   polygonOffsetFactor: -1,
 });
 const lightsMesh = new THREE.Mesh(earthGeo, lightsMat);
-lightsMesh.scale.setScalar(1.001); // iets groter om z-fighting te voorkomen
+lightsMesh.scale.setScalar(1.001);
 earthGroup.add(lightsMesh);
-
-const moonMat = new THREE.MeshPhongMaterial({
-  map: loader.load('/textures/moonmap1k.jpg'),
-});
-const moon = new THREE.Mesh(moonGeo, moonMat);
-scene.add(moon);
-```
-
-Aarde in baan om de zon (angle wordt elke frame bijgewerkt):
-
-```js
-let earthAngle = 0;
-
-// In de animatielus:
-earthAngle += 0.58 * delta;
-earthGroup.position.x = Math.cos(earthAngle) * EARTH_DIST;
-earthGroup.position.z = Math.sin(earthAngle) * EARTH_DIST;
-earthMesh.rotation.y += 0.50 * delta;
 ```
 
 #### Wat heb ik geleerd?
 
-Hoe je een texture inlaadt via `TextureLoader` en koppelt aan een `MeshPhongMaterial`. Hoe `AdditiveBlending` en `polygonOffset` z-fighting voorkomen bij twee overlappende meshes. Hoe je een baan simuleert met `Math.cos` en `Math.sin`.
+Hoe je een texture inlaadt via `TextureLoader`. Hoe `AdditiveBlending` en `polygonOffset` z-fighting voorkomen bij twee overlappende meshes.
 
 #### Wat ga ik volgende keer doen?
 
-Verder werken aan de transitie zodat de camera vloeiend naar een planeet gaat.
+Alle andere planeten toevoegen en beginnen met de detailpagina.
 
 ---
 
-### Week 3 — 23/04/2026
+### Week 4 — woensdag 22/04/2026
 
 #### Wat heb ik gedaan?
 
-Gezorgd dat de camera vloeiend naar een planeet vliegt en hem daarna blijft volgen. De maan roteert nu ook correct om de aarde.
-
-Camera fly-to via GSAP met `lerp` interpolatie:
-
-```js
-function flyTo(body) {
-  localStorage.setItem('activePlanet', body.id);
-  trackedBody  = null;
-  controls.enabled = false;
-  if (currentTween) currentTween.kill();
-
-  const startPos = camera.position.clone();
-  const progress = { t: 0 };
-
-  currentTween = gsap.to(progress, {
-    t: 1,
-    duration: 5,
-    ease: 'power4.out',
-    onUpdate() {
-      const target = body.getPosition(); // .clone() pakt de huidige positie
-      const dest   = target.clone().add(new THREE.Vector3(0, body.camOffset * 0.3, body.camOffset));
-      camera.position.lerpVectors(startPos, dest, progress.t);
-      camera.lookAt(startPos.clone().lerp(target, progress.t));
-    },
-    onComplete() {
-      trackedBody  = body; // camera volgt nu automatisch mee
-      currentTween = null;
-    },
-  });
-}
-```
-
-Maan positie update per frame (los van de `earthGroup` zodat de baan apart berekend wordt):
-
-```js
-moonAngle += 0.002;
-moon.position.x = earthGroup.position.x + Math.cos(moonAngle) * MOON_DIST;
-moon.position.z = earthGroup.position.z + Math.sin(moonAngle) * MOON_DIST;
-moon.position.y = earthGroup.position.y;
-```
-
-#### Wat heb ik geleerd?
-
-Hoe `.clone()` werkt om de huidige positie van een bewegend object op te halen. Zonder `.clone()` krijg je een referentie die meteen verandert.
-
-#### Wat ga ik volgende keer doen?
-
-Feedback gesprek houden en planeetdata inladen via de API binnen het infopaneel.
-
----
-
-### Week 4 — 06/05/2026
-
-#### Wat heb ik gedaan?
-
-Alle andere planeten toegevoegd (Mercurius, Venus, Mars, Jupiter, Saturnus, Uranus, Neptunus, Pluto) met textures en correcte axiale kantelingen. Alle banen zijn samengevoegd in één `orbits` array. Planeetdata wordt nu live opgehaald via de Le Système Solaire API en getoond in een infopaneel. De klikdetectie werkt via een Raycaster.
-
-Alle planeten in één orbits array zodat baan en rotatie centraal beheerd worden:
+Alle andere planeten toegevoegd (Mercurius, Venus, Mars, Jupiter, Saturnus, Uranus, Neptunus, Pluto) met textures en correcte axiale kantelingen. Alle banen samengevoegd in één `orbits` array. Klikdetectie via een Raycaster opgezet.
 
 ```js
 const orbits = [
   { group: mercuryGroup, mesh: mercuryMesh, dist: MERCURY_DIST, angle: 0,   speed: 1.10,  spin: 0.25  },
   { group: venusGroup,   mesh: venusMesh,   dist: VENUS_DIST,   angle: 1.0, speed: 0.84,  spin: -0.15 },
   { group: earthGroup,   mesh: earthMesh,   dist: EARTH_DIST,   angle: 2.0, speed: 0.58,  spin: 0.50  },
-  { group: marsGroup,    mesh: marsMesh,    dist: MARS_DIST,    angle: 3.0, speed: 0.31,  spin: 0.48  },
-  { group: jupiterGroup, mesh: jupiterMesh, dist: JUPITER_DIST, angle: 4.0, speed: 0.049, spin: 1.20  },
-  { group: saturnGroup,  mesh: saturnMesh,  dist: SATURN_DIST,  angle: 5.0, speed: 0.020, spin: 1.10  },
-  { group: uranusGroup,  mesh: uranusMesh,  dist: URANUS_DIST,  angle: 0.5, speed: 0.0069,spin: -0.70 },
-  { group: neptuneGroup, mesh: neptuneMesh, dist: NEPTUNE_DIST, angle: 1.5, speed: 0.0035,spin: 0.75  },
-  { group: plutoGroup,   mesh: plutoMesh,   dist: PLUTO_DIST,   angle: 2.5, speed: 0.0023,spin: 0.15  },
+  // ...
 ];
 
-// In de animatielus:
 for (const o of orbits) {
   o.angle += o.speed * delta;
   o.group.position.x = Math.cos(o.angle) * o.dist;
@@ -292,73 +201,62 @@ for (const o of orbits) {
 }
 ```
 
-Planeet textures en axiale kanteling (Venus draait bijna omgekeerd, Uranus ligt op zijn zij):
+#### Wat heb ik geleerd?
+
+Hoe je een `Raycaster` gebruikt voor klikdetectie op 3D-objecten. Hoe je een array gebruikt om herhalende logica voor meerdere planeten samen te vatten.
+
+#### Wat ga ik morgen doen?
+
+Camera fly-to afmaken en de detailpagina met API data vullen.
+
+---
+
+### Week 4 — donderdag 23/04/2026
+
+#### Wat heb ik gedaan?
+
+De camera vliegt nu vloeiend naar een planeet toe via GSAP en blijft hem daarna volgen. De detailpagina vult zich met echte data via de Le Système Solaire API.
 
 ```js
-// Venus: -177.4° axiale kanteling
-const venusGroup = new THREE.Group();
-venusGroup.rotation.z = -177.4 * Math.PI / 180;
+function flyTo(body) {
+  const startPos = camera.position.clone();
+  const progress = { t: 0 };
 
-// Uranus: -97.8° (bijna op zijn zij)
-const uranusGroup = new THREE.Group();
-uranusGroup.rotation.z = -97.8 * Math.PI / 180;
-
-// Saturnus met ring
-const ringGeo    = new THREE.RingGeometry(SATURN_RADIUS * 1.4, SATURN_RADIUS * 2.3, 64);
-const ringMat    = new THREE.MeshBasicMaterial({ color: 0xd4b483, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
-const saturnRing = new THREE.Mesh(ringGeo, ringMat);
-saturnRing.rotation.x = Math.PI / 2; // plat leggen
-saturnGroup.add(saturnRing);
-```
-
-Raycaster detecteert welke planeet je aanklikt:
-
-```js
-const raycaster   = new THREE.Raycaster();
-const pointer     = new THREE.Vector2();
-const meshBodyMap = new Map();
-
-// Koppel elke mesh aan een body-object
-meshBodyMap.set(earthMesh, bodies.find(b => b.id === 'earth'));
-// ...
-
-renderer.domElement.addEventListener('click', (e) => {
-  pointer.x =  (e.clientX / window.innerWidth)  * 2 - 1;
-  pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-
-  const hits = raycaster.intersectObjects([...meshBodyMap.keys()]);
-  if (hits.length > 0) {
-    const body = meshBodyMap.get(hits[0].object);
-    if (body) { fetchAndShowInfo(body); flyTo(body); }
-  }
-});
-```
-
-API endpoint in Astro (`/api/planet/[id].js`) proxyt de externe API:
-
-```js
-export async function GET({ params }) {
-  const res = await fetch(
-    `https://api.le-systeme-solaire.net/rest/bodies/${params.id}`,
-    { headers: { 'Authorization': `Bearer ${import.meta.env.SOLAR_API_KEY}` } }
-  );
-  const data = await res.text();
-  return new Response(data, {
-    status: res.status,
-    headers: { 'Content-Type': 'application/json' },
+  currentTween = gsap.to(progress, {
+    t: 1, duration: 5, ease: 'power4.out',
+    onUpdate() {
+      const target = body.getPosition();
+      const dest   = target.clone().add(new THREE.Vector3(0, body.camOffset * 0.3, body.camOffset));
+      camera.position.lerpVectors(startPos, dest, progress.t);
+      camera.lookAt(startPos.clone().lerp(target, progress.t));
+    },
+    onComplete() { trackedBody = body; },
   });
 }
 ```
 
-De detail pagina laadt de API data in zodra je op een planeet klikt:
+#### Wat heb ik geleerd?
+
+Hoe je GSAP gebruikt voor vloeiende camera-animaties. Hoe `.clone()` de huidige positie van een bewegend object vastzet.
+
+#### Wat ga ik volgende keer doen?
+
+De deploy op Render.com werkend krijgen en de detailpagina afmaken.
+
+---
+
+### Week 5 — 06/05/2026
+
+#### Wat heb ik gedaan?
+
+De deployment op Render.com werkend gekregen en de detailpagina afgemaakt. De API key werd lokaal wel ingelezen maar niet op Render, omdat de `.env` niet wordt meegestuurd naar de server. De key moest handmatig worden ingesteld in het Render dashboard als environment variable. Het infopaneel toont nu gravity, massa, straal, temperatuur, dichtheid, ontsnappingssnelheid, omlooptijd en aantal manen per planeet.
 
 ```js
 async function fetchAndShowInfo(body) {
   infoPanel.classList.remove('hidden');
   gsap.fromTo(infoPanel, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4 });
 
-  const res = await fetch(`/api/planet/${body.apiId}`);
+  const res = await fetch(`/api/planet?id=${body.apiId}`);
   const d   = await res.json();
 
   document.getElementById('info-name').textContent    = d.englishName;
@@ -371,23 +269,7 @@ async function fetchAndShowInfo(body) {
 
 #### Wat heb ik geleerd?
 
-Hoe je een Astro API route als proxy gebruikt zodat je een externe API key veilig server-side houdt. Hoe `Raycaster` muis-coördinaten omzet naar 3D-stralen. Hoe je een infopaneel dynamisch vult met data van een externe API.
-
-#### Wat ga ik morgen doen?
-
-De render deployen en testen of alles correct werkt.
-
----
-
-### Week 4 — 07/05/2026
-
-#### Wat heb ik gedaan?
-
-Render-problemen opgelost bij de deploy.
-
-#### Wat heb ik geleerd?
-
-Hoe je render-problemen bij een Astro deployment opspoort en oplost.
+Hoe je environment variables instelt op Render.com en waarom een lokale `.env` niet automatisch meekomt bij een deploy. Hoe je een Astro API route als proxy gebruikt zodat de API key veilig server-side blijft.
 
 #### Wat ga ik volgende keer doen?
 
@@ -438,8 +320,3 @@ Project afronden en README bijwerken.
 
 - [Planet Pixel Emporium](https://planetpixelemporium.com/planets.html) — planeet textures
 
-### Referentie
-
-- [NASA Solar System Exploration](https://solarsystem.nasa.gov/)
-- [JPL Solar System Dynamics](https://ssd.jpl.nasa.gov/)
-- [JPL Horizons](https://ssd.jpl.nasa.gov/horizons/)
