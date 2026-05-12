@@ -46,7 +46,9 @@ composer.addPass(new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
   1.5, 0.4, 0.85
 ));
+
 ```
+<img width="746" height="512" alt="image" src="https://github.com/user-attachments/assets/a989b4df-0e77-4bbf-b290-169588637bfe" />
 
 #### Wat heb ik geleerd?
 
@@ -62,9 +64,7 @@ De aarde en maan toevoegen en de maan om de aarde laten draaien.
 
 #### Wat heb ik gedaan?
 
-De aarde en maan toegevoegd als gekleurde bollen zonder texture. De maan draait aan het einde van de dag al om de aarde via `Math.cos` en `Math.sin`.
-
-<img width="746" height="512" alt="image" src="https://github.com/user-attachments/assets/a989b4df-0e77-4bbf-b290-169588637bfe" />
+Twee extra planeten toegevoegd aarde en maan De maan Draait nu om de aarde heen. `Math.cos` en `Math.sin`.
 
 Aarde en maan als simpele gekleurde bollen:
 
@@ -105,7 +105,7 @@ De aarde om de zon laten draaien en textures toevoegen.
 
 #### Wat heb ik gedaan?
 
-De aarde draait nu om de zon via hetzelfde orbit-systeem als de maan. De zon fungeert nu als echte lichtbron via `PointLight`.
+De aarde draait nu om de zon via hetzelfde orbit-systeem als de maan alleen wel in een andere group. De zon functioneert nu als echte lichtbron via `PointLight`.
 
 ```js
 // In de animatielus:
