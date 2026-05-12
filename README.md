@@ -1,49 +1,34 @@
 # Solar System Explorer
 
-Een interactief 3D zonnestelsel gebouwd met Three.js en Astro. Je kan vrij rondvliegen door de ruimte, op een planeet klikken om er naartoe te vliegen, en dan via de Le Système Solaire API echte data over dat hemellichaam bekijken.
+Een interactief 3D zonnestelsel gebouwd met Three.js en Astro. Je kan vrij rondvliegen door de ruimte, op een planeet klikken om er naartoe te vliegen, en dan via de api kan je data inzien over de planeet
 
 ---
 
 
 
 **Web API's gebruikt:**
-- [Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
 - [WebGL (via Three.js)](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API)
-- [View Transition API](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API)
+
+- [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) 
 
 **Content API:**
 - [Le Système Solaire API](https://api.le-systeme-solaire.net/en/)
 
 ---
 
-## Tech stack
-
-| Technologie | Gebruik |
-|---|---|
-| [Astro](https://astro.build/) | Framework / SSR / routing |
-| [Three.js](https://threejs.org/) | 3D render engine |
-| [GSAP](https://gsap.com/) | Camera animaties |
-| FlyControls | Vrije vluchtbesturing |
-| UnrealBloomPass | Gloei-effect op de zon |
-| Le Système Solaire API | Planeetdata |
-
----
 
 
-
-## Weeklog
 
 ### Week 1
 
 #### 1e idee
-Mijn 1e idee was dat je ruimteschepen kon keizen in een mario style 
-
-uitfeedback kwam dat dit niet een duidelijk idee was daarom ben ik 
-
-
-
+Mijn 1e idee was dat je ruimteschepen kon kiezen in een mario style je zou dan stats kunnen zien van de ruimteschepen zoals hoe snel ze zouden zijn en hoe groot. De modellen wilde ik inladen met three js zo kan een gebruiker ook een 3D model zien en zou je ook wat extra dingen zien over het ruimteschip.
 
 ### Week 2 — woensdag 08/04/2026
+
+#### 2e idee
+
+voor mijn 2e idee wil ik een solar systeem maken in 3D en dat je dan vrij kan rond bewegen erbinnen in en dat je ook op een planeet zou kunnen klikken en dan extra informatie over de planeet krijgt. Ik ga zelf de planeten aanmaken met three js.
 
 #### Wat heb ik gedaan?
 
@@ -319,4 +304,3 @@ Project afronden en README bijwerken.
 ### Textures
 
 - [Planet Pixel Emporium](https://planetpixelemporium.com/planets.html) — planeet textures
-
