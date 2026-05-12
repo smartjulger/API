@@ -234,31 +234,9 @@ De deploy op Render.com werkend krijgen en de detailpagina afmaken.
 
 #### Wat heb ik gedaan?
 
-De deployment op Render.com werkend gekregen en de detailpagina afgemaakt. De API key werd lokaal wel ingelezen maar niet op Render, omdat de `.env` niet wordt meegestuurd naar de server. De key moest handmatig worden ingesteld in het Render dashboard als environment variable. Het infopaneel toont nu gravity, massa, straal, temperatuur, dichtheid, ontsnappingssnelheid, omlooptijd en aantal manen per planeet.
+render deployment proberen op te lossen werkt wel locaal maar gaat niet leer via render komt waarschijnlijk omdat ik niet de juiste api key heb op render waardoor hij via render niet de api data inlaad.
 
-```js
-async function fetchAndShowInfo(body) {
-  infoPanel.classList.remove('hidden');
-  gsap.fromTo(infoPanel, { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4 });
 
-  const res = await fetch(`/api/planet?id=${body.apiId}`);
-  const d   = await res.json();
-
-  document.getElementById('info-name').textContent    = d.englishName;
-  document.getElementById('info-gravity').textContent = `${d.gravity} m/s²`;
-  document.getElementById('info-mass').innerHTML      = `${d.mass.massValue} × 10<sup>${d.mass.massExponent}</sup> kg`;
-  document.getElementById('info-temp').textContent    = `${(d.avgTemp - 273.15).toFixed(1)} °C`;
-  document.getElementById('info-moons').textContent   = d.moons ? d.moons.length : '0';
-}
-```
-
-#### Wat heb ik geleerd?
-
-Hoe je environment variables instelt op Render.com en waarom een lokale `.env` niet automatisch meekomt bij een deploy. Hoe je een Astro API route als proxy gebruikt zodat de API key veilig server-side blijft.
-
-#### Wat ga ik volgende keer doen?
-
-Project afronden en README bijwerken.
 
 ---
 
